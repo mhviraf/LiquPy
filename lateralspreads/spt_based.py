@@ -6,7 +6,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-# MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of # Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
+
+
+# MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
 def Bartlett(mode, M, R, T, F, D, W, S):
     R0 = np.power(10, 0.89*M-5.64)
     Rstar = R + R0
@@ -16,7 +18,8 @@ def Bartlett(mode, M, R, T, F, D, W, S):
         logDH = -16.213 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.338*np.log10(S) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
     return np.power(10, logDH)
 
-# Bardet et al 2002 (Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19# -46.)
+
+# Bardet et al 2002 (Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.)
 def Bardet(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         logDH = -6.815 - 0.465 + 1.017 * M - 0.278 * np.log10(R) - 0.026 * R + 0.497*np.log10(W) + 0.558 * np.log10(T)
@@ -24,7 +27,8 @@ def Bardet(mode, M, R, T, F, D, W, S):
         logDH = -6.815 + 1.017*M - 0.278*np.log10(R) - 0.026*R + 0.454*np.log10(S) + 0.558*np.log10(T)
     return np.power(10, logDH)
 
-# Javadi et al 2006 (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers # and Geotechnics, 33(4-5), 222-233.)
+
+# Javadi et al 2006 (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
 def Javadi(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
@@ -34,7 +38,8 @@ def Javadi(mode, M, R, T, F, D, W, S):
         DH = (-0.8*F/M + 0.0014*F**2 + 0.16*T + 0.112*S + 0.04*S*T/D - 0.026*R*D + 1.14)
     return DH
 
-# Javadi et al 2006 - moderate (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers # and Geotechnics, 33(4-5), 222-233.)
+
+# Javadi et al 2006 - moderate (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
 def Javadi_moderate(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         DH = (-234.1/(M**2*R*W) - 156/M**2 - 0.008*F/R**2/T + 0.01*W*T/R - 2.9/F - 0.036*M*T**2*D**2/R**2/W
@@ -45,7 +50,7 @@ def Javadi_moderate(mode, M, R, T, F, D, W, S):
     return DH
 
 
-# Rezania et al 2011 (Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and # lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.)
+# Rezania et al 2011 (Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.)
 def Rezania(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
@@ -57,7 +62,7 @@ def Rezania(mode, M, R, T, F, D, W, S):
     return DH
 
 
-# Zhang et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive # regression splines. Engineering Geology, 170, 1-10.)
+# Zhang et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
 def Zhang(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         BF1 = max(0., np.log10(T) - 0.699)
@@ -106,5 +111,5 @@ def Zhang(mode, M, R, T, F, D, W, S):
                  -3.357*BF15 + 18.876*BF16 - 17.095*BF17 + 1.864*BF18)
     return np.power(10, logDH)
     
-    # an example of how to use it:
-    # print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))
+# an example of how to use it:
+# print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))

@@ -3,6 +3,6 @@
 # https://github.com/LiquePy/LiquePy
 # **************************************************************************************
 
-This open-source Python library is an attempt to facilitate research on soil liquefaction and lateral spreads by providing researchers/engineers with premade/verified python codes.
+This open-source Python library is an attempt to facilitate research on soil liquefaction and lateral spreads by providing researchers/engineers with premade/verified Python codes.
 
 If you are willing to contribute write an email to massoud.hosseinali@utah.edu

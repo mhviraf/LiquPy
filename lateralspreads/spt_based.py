@@ -1,7 +1,7 @@
-# ***************************************************************
+# **************************************************************************************
 # LiquePy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
-# refer to github.com/LiquePy/LiquePy
-# ***************************************************************
+# https://github.com/LiquePy/LiquePy
+# **************************************************************************************
 
 import pandas as pd
 import matplotlib.pyplot as plt

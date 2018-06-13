@@ -21,9 +21,7 @@ import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
 
 # loading datasets (cite Youd et al. 2002 if you are using this default dataset)
-Data = pd.read_excel('YoudHansenBartlett2002.xls')
-Data_FreeFace = Data.loc[Data.loc[:, 'b0'] == 1, :]   # free face points, 'f'
-Data_Slope = Data.loc[Data.loc[:, 'b0'] == 0, :]      # sloping ground points. 's'
+default_dataset = pd.read_excel('YoudHansenBartlett2002.xls')
 
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
@@ -135,7 +133,10 @@ verification_figures = 998
 
 
 # Draws a plot of the predicted values vs. measured values of the method
-def verify(method):
+def verify(method, data):
+    data_FreeFace = default_dataset.loc[default_dataset.loc[:, 'b0'] == 1, :]  # free face points, 'f'
+    data_Slope = default_dataset.loc[default_dataset.loc[:, 'b0'] == 0, :]  # sloping ground points. 's'
+
     print(str(method))
     global verification_figures
     verification_figures += 2
@@ -144,29 +145,34 @@ def verify(method):
     x = []
     y = []
     MSE = 0
-    for i in range(len(Data_FreeFace)):
-        x.append(Data_FreeFace.iloc[i, 1])
+    for i in range(len(data_FreeFace)):
+        x.append(data_FreeFace.iloc[i, 1])
         args = ('f',)
-        args = args + tuple(Data_FreeFace.iloc[i, [3, 4, 5, 6, 7, 8]].values)
+        args = args + tuple(data_FreeFace.iloc[i, [3, 4, 5, 6, 7, 8]].values)
         args = args + (0,)
         Yi = method(*args)
-        MSE += (Data_FreeFace.iloc[i, 1] - Yi)**2/(len(Data_FreeFace))
+        MSE += (data_FreeFace.iloc[i, 1] - Yi)**2/(len(data_FreeFace))
         y.append(Yi)
     plt.scatter(x, y)
     plt.xlabel('measured (m)')
     plt.ylabel('predicted (m)')
     if min(y) > 0: plt.xlim(left=0)
-    plt.ylim(plt.xlim())
+    xlim = plt.xlim()
+    plt.ylim(xlim)
+    plt.plot([xlim[0], xlim[1]], [xlim[0], xlim[1]], 'g--')
+    plt.plot([xlim[0], xlim[1]], [xlim[0], xlim[1]/2], 'g--')
+    plt.plot([xlim[0], xlim[1]/2], [xlim[0], xlim[1]], 'g--')
     plt.title('Free face')
     y2 = y
     print('Free face:')
     print('Data length = {}'.format(len(y)))
-    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE/len(Data_FreeFace)), r2_score(x, y)))
+    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE/len(data_FreeFace)), r2_score(x, y)))
 
     # residuals
     plt.figure(verification_figures+1)
     plt.subplot(1, 2, 1)
     plt.scatter(x, np.subtract(y, x))
+    plt.plot(xlim, [0, 0], 'g--')
     plt.title('Free face')
     plt.xlabel('Measured displacement')
     plt.ylabel('Residuals')
@@ -177,22 +183,26 @@ def verify(method):
     x = []
     y = []
     MSE = 0
-    for i in range(len(Data_Slope)):
-        x.append(Data_Slope.iloc[i, 1])
+    for i in range(len(data_Slope)):
+        x.append(data_Slope.iloc[i, 1])
         args = ('s',)
-        args = args + tuple(Data_Slope.iloc[i, [3, 4, 5, 6, 7, 8, 9]].values)
+        args = args + tuple(data_Slope.iloc[i, [3, 4, 5, 6, 7, 8, 9]].values)
         Yi = method(*args)
-        MSE += (Data_Slope.iloc[i, 1] - Yi) ** 2 / (len(Data_Slope))
+        MSE += (data_Slope.iloc[i, 1] - Yi) ** 2 / (len(data_Slope))
         y.append(Yi)
     plt.scatter(x, y)
     plt.xlabel('measured (m)')
     plt.ylabel('predicted (m)')
     if min(y) > 0: plt.xlim(left=0)
-    plt.ylim(plt.xlim())
+    xlim = plt.xlim()
+    plt.ylim(xlim)
+    plt.plot([xlim[0], xlim[1]], [xlim[0], xlim[1]], 'g--')
+    plt.plot([xlim[0], xlim[1]], [xlim[0], xlim[1] / 2], 'g--')
+    plt.plot([xlim[0], xlim[1] / 2], [xlim[0], xlim[1]], 'g--')
     plt.title('Sloping ground')
     print('Sloping ground:')
     print('Data length = {}'.format(len(y)))
-    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE / len(Data_FreeFace)), r2_score(x, y)))
+    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE / len(data_FreeFace)), r2_score(x, y)))
     # plt.figure()
     # [y2.append(yi) for yi in y]
     # plt.hist(np.log10(y2))
@@ -201,6 +211,7 @@ def verify(method):
     plt.figure(verification_figures+1)
     plt.subplot(1, 2, 2)
     plt.scatter(x, np.subtract(y, x))
+    plt.plot(xlim, [0, 0], 'g--')
     plt.title('Sloping ground')
     plt.xlabel('Measured displacement')
     plt.ylabel('Residuals')
@@ -210,7 +221,7 @@ def verify(method):
 
 # an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
 print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))  # returns predicted values of Bartlett's MLR method at a single point
-verify(Bartlett)  # plots predicted vs. measured displacements of Bartlett's method
+verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements of Bartlett's method
 plt.show()  # shows the plots
 
 

@@ -3,10 +3,27 @@
 # https://github.com/LiquePy/LiquePy
 # **************************************************************************************
 
+# parameters are defined based on the definitions given in Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.
+# mode = 'f': Free-face & 's': sloping ground (not defined in Youd et al. 2002)
+# R = R5the nearest horizontal or map distance from the site to the seismic energy source, in kilometers
+# M = the moment magnitude of the earthquake
+# T = the cumulative thickness of saturated granular layers with corrected blow counts, (N1)60, less than 15, in meters
+# F = the average fines content ~fraction of sediment sample passing a No. 200 sieve! for granular materials included within T , in percent
+# D = the average mean grain size for granular materials within T15, in millimeters
+# S = the ground slope, in percent
+# W = the free-face ratio defined as the height (H) of the free face divided by the distance (L) from the base of the free face to the point in question, in percent
+
+
+# dependencies
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import r2_score, mean_squared_error
 
+# data (cite Youd et al. 2002 if you are using this default dataset)
+Data = pd.read_excel('YoudHansenBartlett2002.xls')
+Data_FreeFace = Data.loc[Data.loc[:, 'b0'] == 1, :]   # f
+Data_Slope = Data.loc[Data.loc[:, 'b0'] == 0, :]      # s
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
 def Bartlett(mode, M, R, T, F, D, W, S):
@@ -62,7 +79,7 @@ def Rezania(mode, M, R, T, F, D, W, S):
     return DH
 
 
-# Zhang et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
+# Goh et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
 def Zhang(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         BF1 = max(0., np.log10(T) - 0.699)
@@ -110,6 +127,87 @@ def Zhang(mode, M, R, T, F, D, W, S):
                  -13.161*BF8 + .52*BF9 - .658*BF10 - 3.312*BF11 - 0.976*BF12 - 0.662*BF13 + 35.986*BF14
                  -3.357*BF15 + 18.876*BF16 - 17.095*BF17 + 1.864*BF18)
     return np.power(10, logDH)
-    
-# an example of how to use it:
-# print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))
+
+
+verification_figures = 998
+
+# Draws a plot of the predicted values vs. measured values of the method
+def verify(method):
+    print(str(method))
+    global verification_figures
+    verification_figures += 2
+    plt.figure(verification_figures)  # free face ************************
+    plt.subplot(1, 2, 1)
+    x = []
+    y = []
+    MSE = 0
+    for i in range(len(Data_FreeFace)):
+        x.append(Data_FreeFace.iloc[i, 1])
+        args = ('f',)
+        args = args + tuple(Data_FreeFace.iloc[i, [3, 4, 5, 6, 7, 8]].values)
+        args = args + (0,)
+        Yi = method(*args)
+        MSE += (Data_FreeFace.iloc[i, 1] - Yi)**2/(len(Data_FreeFace))
+        y.append(Yi)
+    plt.scatter(x, y)
+    plt.xlabel('measured (m)')
+    plt.ylabel('predicted (m)')
+    if min(y) > 0: plt.xlim(left=0)
+    plt.ylim(plt.xlim())
+    plt.title('Free face')
+    y2 = y
+    print('Free face:')
+    print('Data length = {}'.format(len(y)))
+    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE/len(Data_FreeFace)), r2_score(x, y)))
+
+    # residuals
+    plt.figure(verification_figures+1)
+    plt.subplot(1, 2, 1)
+    plt.scatter(x, np.subtract(y, x))
+    plt.title('Free face')
+    plt.xlabel('Measured displacement')
+    plt.ylabel('Residuals')
+    plt.ylim([-5, 5])
+
+    plt.figure(verification_figures)
+    plt.subplot(1, 2, 2) # gently sloping ************************
+    x = []
+    y = []
+    MSE = 0
+    for i in range(len(Data_Slope)):
+        x.append(Data_Slope.iloc[i, 1])
+        args = ('s',)
+        args = args + tuple(Data_Slope.iloc[i, [3, 4, 5, 6, 7, 8, 9]].values)
+        Yi = method(*args)
+        MSE += (Data_Slope.iloc[i, 1] - Yi) ** 2 / (len(Data_Slope))
+        y.append(Yi)
+    plt.scatter(x, y)
+    plt.xlabel('measured (m)')
+    plt.ylabel('predicted (m)')
+    if min(y) > 0: plt.xlim(left=0)
+    plt.ylim(plt.xlim())
+    plt.title('Sloping ground')
+    print('Sloping ground:')
+    print('Data length = {}'.format(len(y)))
+    print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE / len(Data_FreeFace)), r2_score(x, y)))
+    # plt.figure()
+    # [y2.append(yi) for yi in y]
+    # plt.hist(np.log10(y2))
+
+    # residuals
+    plt.figure(verification_figures+1)
+    plt.subplot(1, 2, 2)
+    plt.scatter(x, np.subtract(y, x))
+    plt.title('Sloping ground')
+    plt.xlabel('Measured displacement')
+    plt.ylabel('Residuals')
+    plt.ylim([-5, 5])
+
+
+
+# an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
+print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))  # returns predicted values of Bartlett's MLR method at a single point
+verify(Bartlett)  # plots predicted vs. measured displacements of Bartlett's method
+plt.show()  # shows the plots
+
+

@@ -20,10 +20,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
 
-# data (cite Youd et al. 2002 if you are using this default dataset)
+# loading datasets (cite Youd et al. 2002 if you are using this default dataset)
 Data = pd.read_excel('YoudHansenBartlett2002.xls')
-Data_FreeFace = Data.loc[Data.loc[:, 'b0'] == 1, :]   # f
-Data_Slope = Data.loc[Data.loc[:, 'b0'] == 0, :]      # s
+Data_FreeFace = Data.loc[Data.loc[:, 'b0'] == 1, :]   # free face points, 'f'
+Data_Slope = Data.loc[Data.loc[:, 'b0'] == 0, :]      # sloping ground points. 's'
+
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
 def Bartlett(mode, M, R, T, F, D, W, S):
@@ -79,8 +80,9 @@ def Rezania(mode, M, R, T, F, D, W, S):
     return DH
 
 
+# The following method has not yet been verified and the results differ from the ones given in the original paper
 # Goh et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
-def Zhang(mode, M, R, T, F, D, W, S):
+def Goh(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         BF1 = max(0., np.log10(T) - 0.699)
         BF2 = max(0., 0.699 - np.log10(T))
@@ -130,6 +132,7 @@ def Zhang(mode, M, R, T, F, D, W, S):
 
 
 verification_figures = 998
+
 
 # Draws a plot of the predicted values vs. measured values of the method
 def verify(method):

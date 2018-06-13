@@ -14,3 +14,10 @@ So far the following methods have been added:
     - Genetic programming (Javadi et al. 2006)
     - Evolutionary-based approach (Rezania et al. 2011)
     - MARS (Goh et al. 2014), this method has not been yet verified and the results differs from what is given in the original paper
+
+
+Install the following Python dependencies before using these codes:
+ - numpy (http://www.numpy.org/)
+ - pandas (https://pandas.pydata.org/)
+ - sklearn (scikit-learn.org)
+ - matplotlib (https://matplotlib.org/)

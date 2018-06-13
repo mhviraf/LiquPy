@@ -12,7 +12,7 @@
 # D = the average mean grain size for granular materials within T15, in millimeters
 # S = the ground slope, in percent
 # W = the free-face ratio defined as the height (H) of the free face divided by the distance (L) from the base of the free face to the point in question, in percent
-
+# b0 = 1 for free face and 0 for sloping ground data points
 
 # dependencies
 import pandas as pd
@@ -221,7 +221,7 @@ def verify(method, data):
 
 # an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
 print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))  # returns predicted values of Bartlett's MLR method at a single point
-verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements of Bartlett's method
+verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002 dataset
 plt.show()  # shows the plots
 
 

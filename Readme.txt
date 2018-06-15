@@ -9,12 +9,21 @@ If you are willing to contribute write an email to massoud.hosseinali@utah.edu
 
 So far the following methods have been added:
   - lateralspreads/spt_based.py:
-    - MLR (Youd, Hansen, & Bartlett 2002)
-    - MLR (Bardet et al. 2002)
+    - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
+    - Multi Linear Regression (MLR) (Bardet et al. 2002)
     - Genetic programming (Javadi et al. 2006)
     - Evolutionary-based approach (Rezania et al. 2011)
-    - MARS (Goh et al. 2014), this method has not been yet verified and the results differs from what is given in the original paper
+    - Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
+    - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
 
+
+*Use of the following functions is not recommended since their results differ from what is given in their original papers:
+Please note it does not mean the models are incorrect**. However, we were unable to replicate them in this library and therefore would not recommend them.
+  - lateralspreads/spt_based.py:
+    - Baziar2013()
+    - Goh()
+
+**If you found bugs please report it to massoud.hosseinali@utah.edu
 
 Install the following Python dependencies before using these codes:
  - numpy (http://www.numpy.org/)

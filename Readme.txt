@@ -8,7 +8,9 @@ This open-source Python library is an attempt to facilitate research on soil liq
 If you are willing to contribute write an email to massoud.hosseinali@utah.edu
 
 So far the following methods have been added:
-  - lateralspreads/spt_based.py:
+  - under "liquefaction/spt_based.py":
+    - Simplified factor of safety for triggering of soil liquefaction based on Idriss, I. M., & Boulanger, R. W. (2008). Soil liquefaction during earthquakes. Earthquake Engineering Research Institute.
+  - under "lateralspreads/spt_based.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
     - Multi Linear Regression (MLR) (Bardet et al. 2002)
     - Genetic programming (Javadi et al. 2006)
@@ -19,7 +21,7 @@ So far the following methods have been added:
 
 *Use of the following functions is not recommended since their results differ from what is given in their original papers:
 Please note it does not mean the models are incorrect**. However, we were unable to replicate them in this library and therefore would not recommend them.
-  - lateralspreads/spt_based.py:
+  - under "lateralspreads/spt_based.py":
     - Baziar2013()
     - Goh()
 

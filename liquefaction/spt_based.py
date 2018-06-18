@@ -10,8 +10,8 @@ import pandas as pd
 spt_idriss_boulanger_bore_data_appendix_a = pd.read_excel('spt_Idriss_Boulanger.xlsx')
 
 
-def simplified_liquefaction_trigering(borelog, Pa, M, Zw, sampler_correction_factor,
-                                      liner_correction_factor, hammer_energy, rod_extension):
+def simplified_liquefaction_triggering_fos(borelog, Pa, M, Zw, sampler_correction_factor,
+                                          liner_correction_factor, hammer_energy, rod_extension):
     # Pa = Peak ground acceleration (g)
     # M = Earthquake magnitude
     # Zw = water table depth (m)
@@ -94,7 +94,7 @@ def simplified_liquefaction_trigering(borelog, Pa, M, Zw, sampler_correction_fac
     print('spt_based_fos_outputs.xls has been saved.')
 
 # verification with Example of SPT-based liquefaction triggering analysis for a single boring (Soil Liquefaction During Earthquake textbook by Idriss and Boulanger)
-simplified_liquefaction_trigering(spt_idriss_boulanger_bore_data_appendix_a, 0.280, 6.9, 1.8, 1, 1, 75, 1.5)
+simplified_liquefaction_triggering_fos(spt_idriss_boulanger_bore_data_appendix_a, 0.280, 6.9, 1.8, 1, 1, 75, 1.5)
 
 
 

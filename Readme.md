@@ -1,12 +1,13 @@
-# **************************************************************************************
 # LiquePy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
-# https://github.com/LiquePy/LiquePy
-# **************************************************************************************
+## https://github.com/LiquePy/LiquePy
 
 This open-source Python library is an attempt to facilitate research on soil liquefaction and lateral spreads by providing researchers/engineers with premade/verified Python codes.
 
-If you are willing to contribute write an email to massoud.hosseinali@utah.edu
 
+If you are willing to contribute or found bugs write an email to massoud.hosseinali@utah.edu
+
+
+### What is included?
 So far the following methods have been added:
   - under "liquefaction/spt_based.py":
     - Simplified factor of safety for triggering of soil liquefaction based on Idriss & Boulanger (2008)
@@ -19,15 +20,15 @@ So far the following methods have been added:
     - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
 
 
-* Use of the following functions is not recommended since their results differ from what is given in their original papers:
-Please note it does not mean the models are incorrect**. However, we were unable to replicate them in this library and therefore would not recommend them.
+### What is not verified yet?
+Use of the following functions is not recommended since their results differ from what is given in their original papers:
+Please note it does not mean the models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend them.
   - under "lateralspreads/spt_based.py":
     - Baziar2013()
     - Goh()
 
-** If you found bugs please report it to massoud.hosseinali@utah.edu
 
-## Dependencies:
+### Dependencies:
 Install the following Python dependencies before using these codes:
  - numpy (http://www.numpy.org/)
  - pandas (https://pandas.pydata.org/)
@@ -35,7 +36,7 @@ Install the following Python dependencies before using these codes:
  - matplotlib (https://matplotlib.org/)
 
 
- ## References:
+ ### References:
  - Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.
  - Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.
  - Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.

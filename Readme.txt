@@ -28,5 +28,5 @@ Please note it does not mean the models are incorrect**. However, we were unable
 Install the following Python dependencies before using these codes:
  - numpy (http://www.numpy.org/)
  - pandas (https://pandas.pydata.org/)
- - sklearn (scikit-learn.org)
+ - sklearn (https://scikit-learn.org)
  - matplotlib (https://matplotlib.org/)

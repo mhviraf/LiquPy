@@ -18,7 +18,7 @@ So far the following methods have been added:
     - Evolutionary-based approach (Rezania et al. 2011)
     - Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
     - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
-    - Lateral Displacement Index (LDI) (Zhang et al.)
+    - Lateral Displacement Index (LDI) (Zhang et al. 2004)
 
 
 ### What is not verified yet?

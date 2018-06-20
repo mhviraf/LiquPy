@@ -18,6 +18,7 @@ So far the following methods have been added:
     - Evolutionary-based approach (Rezania et al. 2011)
     - Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
     - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
+    - Lateral Displacement Index (LDI) (Zhang et al.)
 
 
 ### What is not verified yet?
@@ -44,3 +45,4 @@ Install the following Python dependencies before using these codes:
  - Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.
  - Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.
  - Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.
+ - Zhang, G., Robertson, P. K., & Brachman, R. W. I. (2004). Estimating liquefaction-induced lateral displacements using the standard penetration test or cone penetration test. Journal of Geotechnical and Geoenvironmental Engineering, 130(8), 861-871.

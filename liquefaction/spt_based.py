@@ -7,11 +7,8 @@ import numpy as np
 import pandas as pd
 
 
-spt_idriss_boulanger_bore_data_appendix_a = pd.read_excel('spt_Idriss_Boulanger.xlsx')
-
-
 def simplified_liquefaction_triggering_fos(borelog, Pa, M, Zw, sampler_correction_factor,
-                                          liner_correction_factor, hammer_energy, rod_extension):
+                                          liner_correction_factor, hammer_energy, rod_extension, save_to_file=False):
     # Pa = Peak ground acceleration (g)
     # M = Earthquake magnitude
     # Zw = water table depth (m)
@@ -87,14 +84,22 @@ def simplified_liquefaction_triggering_fos(borelog, Pa, M, Zw, sampler_correctio
         depth = row[1]
         gamma = row[6]
 
-        output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, delta_n, N160cs, rd, CSR, MSF, CRR0, CRR, FoS])
+        output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, delta_n, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, FoS])
 
-    pd.DataFrame(output).to_excel('spt_based_fos_outputs.xls',
-                                  header= ['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'delta_n', 'N160cs', 'rd', 'CSR', 'MSF', 'CRR0', 'CRR', 'FS'])
-    print('spt_based_fos_outputs.xls has been saved.')
+    output_dataframe = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'delta_n', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'FS'])
 
-# verification with Example of SPT-based liquefaction triggering analysis for a single boring (Soil Liquefaction During Earthquake textbook by Idriss and Boulanger)
-simplified_liquefaction_triggering_fos(spt_idriss_boulanger_bore_data_appendix_a, 0.280, 6.9, 1.8, 1, 1, 75, 1.5)
+    if save_to_file == True:
+        output_dataframe.to_excel('spt_based_fos_outputs.xls')
+        print('spt_based_fos_outputs.xls has been saved.')
+    else:
+        return output_dataframe
+
+
+if __name__ == '__main__':
+    spt_idriss_boulanger_bore_data_appendix_a = pd.read_excel('spt_Idriss_Boulanger.xlsx')
+
+    # verification with Example of SPT-based liquefaction triggering analysis for a single boring (Soil Liquefaction During Earthquake textbook by Idriss and Boulanger)
+    simplified_liquefaction_triggering_fos(spt_idriss_boulanger_bore_data_appendix_a, 0.280, 6.9, 1.8, 1, 1, 75, 1.5, True)
 
 
 

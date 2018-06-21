@@ -22,8 +22,7 @@ So far the following methods have been added:
 
 
 ### What is not verified yet?
-Use of the following functions of our library is not recommended since their results differ from what is given in their original papers:
-Please note it does not mean the models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend using these functions of our library:
+Use of the following functions of our library is not recommended since their results differ from what is given in their original papers; please note it does not mean these models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend using these functions of our library:
   - under "lateralspreads/spt_based.py":
     - Baziar2013()
     - Goh()

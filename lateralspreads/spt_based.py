@@ -276,11 +276,11 @@ def Zhang2004(borehole, Pa, M, Zw, sampler_correction_factor,
 
 if __name__=='__main__':
     # loading dataset from Youd et al. (2002)
-    default_dataset = pd.read_excel('YoudHansenBartlett2002.xls')
+    default_dataset = pd.read_excel('YoudHansenBartlett2002_demo.xls')
 
     # an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
     # print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))  # returns predicted values of Bartlett's MLR method at a single point
-    # verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002 dataset
+    # verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
     # plt.show()  # shows the plots
 
 

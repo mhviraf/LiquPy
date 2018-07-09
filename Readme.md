@@ -9,21 +9,20 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 
 ### What is included?
 So far the following methods have been added:
-  - under "liquefaction/spt_based.py":
+  - under "Analysis_on_boreholes.py":
     - Simplified factor of safety for triggering of soil liquefaction based on Idriss & Boulanger (2008)
-  - under "lateralspreads/spt_based.py":
+    - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
+  - under "Analysis_on_points.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
     - Multi Linear Regression (MLR) (Bardet et al. 2002)
     - Genetic programming (Javadi et al. 2006)
     - Evolutionary-based approach (Rezania et al. 2011)
     - Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
     - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
-    - Lateral Displacement Index (LDI) (Zhang et al. 2004)
-
 
 ### What is not verified yet?
 Use of the following functions of our library is not recommended since their results differ from what is given in their original papers; please note it does not mean these models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend using these functions of our library:
-  - under "lateralspreads/spt_based.py":
+  - under "Analysis_on_points.py":
     - Baziar2013()
     - Goh()
 

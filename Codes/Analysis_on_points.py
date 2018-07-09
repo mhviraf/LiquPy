@@ -19,9 +19,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
-from liquefaction.spt_based import simplified_liquefaction_triggering_fos
 
 # Empirical methods ************************************************************
+
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
 def Bartlett(mode, M, R, T, F, D, W, S):
@@ -33,6 +33,7 @@ def Bartlett(mode, M, R, T, F, D, W, S):
         logDH = -16.213 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.338*np.log10(S) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
     return np.power(10, logDH)
 
+
 # Bardet et al 2002 (Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.)
 def Bardet(mode, M, R, T, F, D, W, S):
     if mode == 'f':
@@ -40,6 +41,7 @@ def Bardet(mode, M, R, T, F, D, W, S):
     elif mode == 's':
         logDH = -6.815 + 1.017*M - 0.278*np.log10(R) - 0.026*R + 0.454*np.log10(S) + 0.558*np.log10(T)
     return np.power(10, logDH)
+
 
 # Javadi et al 2006 (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
 def Javadi2006(mode, M, R, T, F, D, W, S):
@@ -51,6 +53,7 @@ def Javadi2006(mode, M, R, T, F, D, W, S):
         DH = (-0.8*F/M + 0.0014*F**2 + 0.16*T + 0.112*S + 0.04*S*T/D - 0.026*R*D + 1.14)
     return DH
 
+
 # Javadi et al 2006 - moderate (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
 def Javadi_moderate2006(mode, M, R, T, F, D, W, S):
     if mode == 'f':
@@ -60,6 +63,7 @@ def Javadi_moderate2006(mode, M, R, T, F, D, W, S):
         DH = (-0.027*T**2*F/M**2 + 0.05*R*T/M**2/D + 0.44/M/R**2/S/T - 0.03*R -0.02*M/S/T - 5*10**-5*M*R/D**2
             + 0.075*M**2 - 2.4)
     return DH
+
 
 # Rezania et al 2011 (Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.)
 def Rezania(mode, M, R, T, F, D, W, S):
@@ -72,6 +76,7 @@ def Rezania(mode, M, R, T, F, D, W, S):
               -2.2542*10**-12*M**0.5*T**2*D**2/R**0.5/S**0.5/F**2 + 0.036036*M*S**0.5*T/D**0.5 + 0.85441)
     return DH
 
+
 # Baziar and Azizkani 2013 (Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.)
 def Baziar2013(mode, M, R, T, F, D, W, S):
     DH = (54.36*T/(D+0.6532) - 55.34*T/(D+0.6689) + 196.9*T/(W+0.9212) - 199.8*T/(W+0.9434) + 0.0446*(W-S)/R
@@ -79,6 +84,7 @@ def Baziar2013(mode, M, R, T, F, D, W, S):
           + M*(0.1058*T + 0.009652*T*W - 0.1225) + 0.00024*T*F**2 - 0.00255*R*W*S + 2.6)
     if DH < 0: DH = 0
     return DH
+
 
 # Goh et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
 def Goh(mode, M, R, T, F, D, W, S):
@@ -234,59 +240,15 @@ def verify(method, data):
     plt.ylim([-5, 5])
 
 
-# Analytical methods ************************************************************
-# Zhang, G., Robertson, P. K., & Brachman, R. W. I. (2004). Estimating liquefaction-induced lateral displacements using the standard penetration test or cone penetration test. Journal of Geotechnical and Geoenvironmental Engineering, 130(8), 861-871.
-def Zhang2004(borehole, Pa, M, Zw, sampler_correction_factor,
-                                          liner_correction_factor, hammer_energy, rod_extension, save_to_file=False):
-    dataframe = simplified_liquefaction_triggering_fos(borehole, Pa, M, Zw, sampler_correction_factor,
-                                          liner_correction_factor, hammer_energy, rod_extension, save_to_file=False)
-
-    for i, row in dataframe.iterrows():
-        if i == 0:
-            dataframe.loc[i, 'dHi'] = dataframe.loc[i, 'depth']
-        elif i < len(dataframe)-1:
-            dataframe.loc[i, 'dHi'] = (dataframe.loc[i+1, 'depth'] - dataframe.loc[i-1, 'depth'])/2
-        else:
-            dataframe.loc[i, 'dHi'] = dataframe.loc[i, 'depth'] - dataframe.loc[i-1, 'depth']
-        if dataframe.loc[i, 'FS'] == 'n.a.':
-            dataframe.loc[i, 'gamma_lim'] = 0
-            dataframe.loc[i, 'f_alpha'] = 0
-            dataframe.loc[i, 'gamma_max'] = 0
-            dataframe.loc[i, 'de'] = 0
-            dataframe.loc[i, 'de'] = 0
-        else:
-            dataframe.loc[i, 'gamma_lim'] = max(0, min(0.5, 1.859*( 1.1 - np.sqrt(dataframe.loc[i, 'N160cs']/45))**3 ) )
-            dataframe.loc[i, 'f_alpha'] = 0.032 + 0.69*np.sqrt(max(7, dataframe.loc[i, 'N160cs'])) - 0.13*max(7, dataframe.loc[i, 'N160cs'])
-            if row['FS'] > 2:
-                dataframe.loc[i, 'gamma_max'] = 0
-            elif row['FS'] < dataframe.loc[i, 'f_alpha']:
-                dataframe.loc[i, 'gamma_max'] = dataframe.loc[i, 'gamma_lim']
-            else:
-                dataframe.loc[i, 'gamma_max'] = min(dataframe.loc[i, 'gamma_lim'], 0.035*(1 - dataframe.loc[i, 'f_alpha'])*(2 - row['FS'])/(row['FS'] - dataframe.loc[i, 'f_alpha']) )
-            dataframe.loc[i, 'de'] = 1.5 * np.exp(-0.369 * np.sqrt(dataframe.loc[i, 'N160cs'])) * min(0.08, dataframe.loc[i, 'gamma_max'])
-        dataframe.loc[i, 'dLDIi'] = dataframe.loc[i, 'dHi']*dataframe.loc[i, 'gamma_max']
-        dataframe.loc[i, 'dSi'] = dataframe.loc[i, 'dHi'] * dataframe.loc[i, 'de']
-    print('LDI = {}, settlement = {}'.format(sum(dataframe.dLDIi.values), sum(dataframe.dSi.values)))
-    if save_to_file == True:
-        dataframe.to_excel('zhang2004_results.xls')
-        print('zhang2004_results.xls has been saved.')
-
-
-
-
 if __name__=='__main__':
     # loading demo dataset from Youd et al. (2002)
-    default_dataset = pd.read_excel('YoudHansenBartlett2002_demo.xls')
+    default_dataset = pd.read_excel('default_datasets/YoudHansenBartlett2002_demo.xls')
 
     # an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
-    # print(Bartlett('f', 7.217982, 18.385526, 8.567101, 17.115035, 0.359680, 10.656302, 0))  # returns predicted values of Bartlett's MLR method at a single point
-    # verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
-    # plt.show()  # shows the plots
+    # a) running on a single point
+    print(Bartlett(mode='f', M=7.217982, R=18.385526, T=8.567101, F=17.115035, D=0.359680, W=10.656302, S=0))  # returns predicted values of Bartlett's MLR method at a single point
 
-
-    # loading dataset from Idriss & Boulanger (2008)
-    spt_idriss_boulanger_bore_data_appendix_a = pd.read_excel('../liquefaction/spt_Idriss_Boulanger.xlsx')
-
-    # To verify Zhang's method based on Appendix C of Idriss & Boulanger (2008)
-    # Zhang2004(spt_idriss_boulanger_bore_data_appendix_a, 0.280, 6.9, 1.8, 1, 1, 75, 1.5, save_to_file=True)
+    # b) running on a database
+    verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
+    plt.show()  # shows the plots
 

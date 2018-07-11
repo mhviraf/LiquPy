@@ -11,16 +11,32 @@ import matplotlib.pyplot as plt
 # borehole object
 class Borehole:
 
-    def __init__(self, bore_log_data):
-        self.bore_log_data = bore_log_data
+    number_of_holes = 0
 
+    # customize visualization
+    viz_liquefied_text_kwargs = {'color': (0, 0, 0, 0.4), 'horizontalalignment': 'center', 'verticalalignment': 'center'}
+    viz_dashed_guidelines = {'color': (0, 0, 1, 0.05), 'ls': '--'}
+
+    def __init__(self, bore_log_data, units='metric'):
+        Borehole.number_of_holes += 1
+
+        self.bore_log_data = bore_log_data
+        if units == 'metric':
+            self.units_length = 'm'
+            self.units_area = '$m^2$'
+        elif units == 'british':
+            self.units_length = 'ft'
+            self.units_area = '$ft^2$'
+
+    def __del__(self):
+        Borehole.number_of_holes -= 1
 
     # simplified liquefaction triggering analysis
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
                                                liner_correction_factor, hammer_energy, rod_extension):
         self.Pa = Pa  # Peak ground acceleration (g)
         self.M = M  # Earthquake magnitude
-        self.Zw = Zw  # water table depth (m)
+        self.Zw = Zw  # water table depth (in self.units_length units)
         self.sampler_correction_factor = sampler_correction_factor
         self.liner_correction_factor = liner_correction_factor
         self.hammer_energy = hammer_energy
@@ -106,11 +122,11 @@ class Borehole:
     # visualization of the liquefaction analysis
     def visualize(self):
         # subplot of SPT blow counts
-        fig, ax = plt.subplots(ncols=2, figsize=(6, 6))
-        ax[0].xaxis.tick_top()
-        ax[0].xaxis.set_label_position('top')
-        ax[1].xaxis.tick_top()
-        ax[1].xaxis.set_label_position('top')
+        fig, ax = plt.subplots(ncols=3, figsize=(12, 6))
+        [ax[x].xaxis.tick_top() for x in range(ax.shape[0])]
+        [ax[x].xaxis.set_label_position('top') for x in range(ax.shape[0])]
+
+        total_depth = max(self.new_bore_log_data['depth'])*-1.1
 
         soil_type_0 = ''
         depth_0 = 0
@@ -123,7 +139,7 @@ class Borehole:
             if not soil_type_0 == soil_type_1:
                 ax[0].plot([0, spt_plot_max_x], [(depth_1+depth_0)*.5, (depth_1+depth_0)*.5], color=(0, 0, 0, 0.15))
 
-            ax[0].plot([0, spt_plot_max_x], [depth_1, depth_1], '--', color=(0, 0, 0, 0.05))
+            ax[0].plot([0, spt_plot_max_x], [depth_1, depth_1], **self.viz_dashed_guidelines)
 
             depth_0 = depth_1
             soil_type_0 = soil_type_1
@@ -132,43 +148,50 @@ class Borehole:
         ax[0].scatter(self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'N160'] != 'n.a.', 'N160'],
                       -self.bore_log_data.ix[self.new_bore_log_data.loc[:, 'N160'] != 'n.a.', 1], marker='+', s=75, label='$(N_1)_{60}$')
         ax[0].legend(loc='lower right')
-        ax[0].set(xlabel='SPT BLOW COUNT', ylabel='DEPTH', xlim=[0, spt_plot_max_x])
-        ax[0].set_ylim(top=0)
+        ax[0].set(xlabel='SPT BLOW COUNT', ylabel='DEPTH ({})'.format(self.units_length), xlim=[0, spt_plot_max_x])
+        ax[0].set_ylim(top=0, bottom=total_depth)
 
         # subplot of CSR & CRR
         depth_0 = 0
+        layer_change_0 = 0
         liquefiable_0 = False
         csr_0 = 0
         crr_0 = 0
         na_0 = False
+
         csrcrr_plot_max_x = 1
+        fos_plot_max_x = self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'FS'] != 'n.a.', 'FS'].max()*1.1
 
         for i, row in self.new_bore_log_data.iterrows():
             depth_1 = -row[0]
-            ax[1].plot([-1, csrcrr_plot_max_x], [depth_1, depth_1], '--', color=(0, 0, 0, 0.05))
+            ax[1].plot([0, csrcrr_plot_max_x], [depth_1, depth_1], **self.viz_dashed_guidelines)
+            ax[2].plot([0, fos_plot_max_x], [depth_1, depth_1], **self.viz_dashed_guidelines)
             na_1 = False
             csr_1 = row['CSR']
             crr_1 = row['CRR']
             if row['FS'] == 'n.a.':
                 na_1 = True
                 liquefiable_1 = False
-                ax[1].text(-0.95, depth_1, 'Nonliquefied (Excluded)', color=(0, 0, 0, 0.4), verticalalignment='center')
             elif row['FS'] > 1:
                 liquefiable_1 = False
-                ax[1].text(-0.95, depth_1, 'Nonliquefied (FS = {} > 1.0)'.format(round(row['FS'], 1)),
-                           color=(0, 0, 0, 0.4), verticalalignment='center')
             else:
                 liquefiable_1 = True
-                ax[1].text(-0.95, depth_1, 'Liquified (FS = {} < 1.0)'.format(round(row['FS'], 1)),
-                           color=(0, 0, 0, 0.4),
-                           verticalalignment='center')
+
             if i > 0:
                 if not na_1 and not na_0:
                     ax[1].plot([csr_0, csr_1], [depth_0, depth_1], 'k--')
                     ax[1].plot([crr_0, crr_1], [depth_0, depth_1], 'k-')
 
             if not liquefiable_0 == liquefiable_1:
+                layer_change_1 = (depth_1+depth_0)*.5
+                if not liquefiable_1:
+                    ax[2].text(0.5*fos_plot_max_x, (layer_change_0+layer_change_1)*0.5, 'LIQUEFIED ZONE', **Borehole.viz_liquefied_text_kwargs)
+                else:
+                    ax[2].text(0.5*fos_plot_max_x, (layer_change_0 + layer_change_1) * 0.5, 'NON-LIQUEFIED ZONE', **Borehole.viz_liquefied_text_kwargs)
+
                 ax[1].plot([-1, csrcrr_plot_max_x], [(depth_1+depth_0)*.5, (depth_1+depth_0)*.5], color=(0, 0, 0, 0.15))
+                ax[2].plot([0, fos_plot_max_x], [(depth_1 + depth_0) * .5, (depth_1 + depth_0) * .5], color=(0, 0, 0, 0.15))
+                layer_change_0 = layer_change_1
 
             liquefiable_0 = liquefiable_1
             depth_0 = depth_1
@@ -176,21 +199,43 @@ class Borehole:
             crr_0 = crr_1
             na_0 = na_1
 
+        if liquefiable_1:
+            ax[2].text(0.5*fos_plot_max_x, (total_depth+layer_change_1)*0.5, 'LIQUEFIED ZONE', **Borehole.viz_liquefied_text_kwargs)
+        else:
+            ax[2].text(0.5 * fos_plot_max_x, (total_depth + layer_change_1) * 0.5, 'NON-LIQUEFIED ZONE', **Borehole.viz_liquefied_text_kwargs)
+
         ax[1].plot([0, 0], [0, 0], 'k--', label='CSR')
-        ax[1].plot([0, 0], [0, 0], 'k-', label='CRR')
+        ax[1].plot([0, 0], [0, 0], 'k-', label='Earthquake-induced CRR')
         ax[1].legend(loc='lower right')
-        ax[1].set(xlabel='CSR & CRR', ylabel='DEPTH', xlim=[-1, csrcrr_plot_max_x])
-        ax[1].set_ylim(top=0)
-        plt.xticks([0, 0.5, 1], [0, 0.5, 1])
+        ax[1].set(xlabel='CSR & CRR', xlim=[0, csrcrr_plot_max_x])
+        ax[1].set_ylim(top=0, bottom=total_depth)
+
+        # subplot of Factor of safety
+        depth_0 = 0
+        fs_0 = 0
+        for i, row in self.new_bore_log_data.iterrows():
+            fs_1 = row['FS']
+            depth_1 = -row['depth']
+            if i > 0 and fs_1 != 'n.a.' and fs_0 != 'n.a.':
+                ax[2].plot([fs_0, fs_1], [depth_0, depth_1], 'k-')
+
+            fs_0 = fs_1
+            depth_0 = depth_1
+        ax[2].plot([1, 1], [0, total_depth], '--', color=(0, 0, 0, 0.1))
+        ax[2].set(xlabel='FACTOR OF SAFETY', xlim=[0, fos_plot_max_x])
+        ax[2].set_ylim(top=0, bottom=total_depth)
+
         plt.show()
+
 
     def save_to_file(self, file_name):
         self.new_bore_log_data.to_excel(file_name + '.xls')
         print(file_name + '.xls has been saved.')
 
+
     # Analytical methods for lateral spread and settlement analysis ************************************************************
     # Zhang, G., Robertson, P. K., & Brachman, R. W. I. (2004). Estimating liquefaction-induced lateral displacements using the standard penetration test or cone penetration test. Journal of Geotechnical and Geoenvironmental Engineering, 130(8), 861-871.
-    def zhang2004(self, save_to_file=False, file_name=''):
+    def zhang2004(self, save_to_file=False, file_name='lateral_spread_analysis'):
         try:
             for i, row in self.new_bore_log_data.iterrows():
                 if i == 0:
@@ -206,8 +251,7 @@ class Borehole:
                     self.new_bore_log_data.loc[i, 'de'] = 0
                     self.new_bore_log_data.loc[i, 'de'] = 0
                 else:
-                    self.new_bore_log_data.loc[i, 'gamma_lim'] = max(0, min(0.5, 1.859 * (
-                    1.1 - np.sqrt(self.new_bore_log_data.loc[i, 'N160cs'] / 45)) ** 3))
+                    self.new_bore_log_data.loc[i, 'gamma_lim'] = max(0, min(0.5, 1.859*(1.1 - np.sqrt(self.new_bore_log_data.loc[i, 'N160cs'] / 45)) ** 3))
                     self.new_bore_log_data.loc[i, 'f_alpha'] = 0.032 + 0.69 * np.sqrt(max(7, self.new_bore_log_data.loc[i, 'N160cs'])) - 0.13 * max(7, self.new_bore_log_data.loc[i, 'N160cs'])
                     if row['FS'] > 2:
                         self.new_bore_log_data.loc[i, 'gamma_max'] = 0

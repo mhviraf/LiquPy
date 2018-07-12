@@ -24,7 +24,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
-def Bartlett(mode, M, R, T, F, D, W, S):
+def calc_ls_bartlett(mode, M, R, T, F, D, W, S):
     R0 = np.power(10, 0.89*M-5.64)
     Rstar = R + R0
     if mode == 'f':
@@ -35,7 +35,7 @@ def Bartlett(mode, M, R, T, F, D, W, S):
 
 
 # Bardet et al 2002 (Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.)
-def Bardet(mode, M, R, T, F, D, W, S):
+def calc_ls_bardet(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         logDH = -6.815 - 0.465 + 1.017 * M - 0.278 * np.log10(R) - 0.026 * R + 0.497*np.log10(W) + 0.558 * np.log10(T)
     elif mode == 's':
@@ -44,7 +44,7 @@ def Bardet(mode, M, R, T, F, D, W, S):
 
 
 # Javadi et al 2006 (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
-def Javadi2006(mode, M, R, T, F, D, W, S):
+def calc_ls_javadi2006(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
         DH = (-163.1/M**2 + 57/R/F - 0.0035*T**2/W/D**2 + 0.02*T**2/F/D**2 - 0.26*(T/F)**2 + 0.006*T**2
@@ -55,7 +55,7 @@ def Javadi2006(mode, M, R, T, F, D, W, S):
 
 
 # Javadi et al 2006 - moderate (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
-def Javadi_moderate2006(mode, M, R, T, F, D, W, S):
+def calc_ls_javadi_moderate2006(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         DH = (-234.1/(M**2*R*W) - 156/M**2 - 0.008*F/R**2/T + 0.01*W*T/R - 2.9/F - 0.036*M*T**2*D**2/R**2/W
             + 9.4*M/R/F - 4*10**-6*M*R**2/D + 3.84)
@@ -66,7 +66,7 @@ def Javadi_moderate2006(mode, M, R, T, F, D, W, S):
 
 
 # Rezania et al 2011 (Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.)
-def Rezania(mode, M, R, T, F, D, W, S):
+def calc_ls_rezania(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
         DH = (-2.1414*R**0.5*W**0.5/M**2/D**0.5 - 0.061863*T*F/M**0.5/W**0.5 - 11.1201*M**2/R/W**0.5/F
@@ -78,7 +78,7 @@ def Rezania(mode, M, R, T, F, D, W, S):
 
 
 # Baziar and Azizkani 2013 (Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.)
-def Baziar2013(mode, M, R, T, F, D, W, S):
+def calc_ls_baziar2013(mode, M, R, T, F, D, W, S):
     DH = (54.36*T/(D+0.6532) - 55.34*T/(D+0.6689) + 196.9*T/(W+0.9212) - 199.8*T/(W+0.9434) + 0.0446*(W-S)/R
           - 1.718/(S+0.8956) - 0.02452*T*F - 0.00625*F*S + 0.001474*R*(W-T) - 0.06875*T*(W-S)
           + M*(0.1058*T + 0.009652*T*W - 0.1225) + 0.00024*T*F**2 - 0.00255*R*W*S + 2.6)
@@ -87,7 +87,7 @@ def Baziar2013(mode, M, R, T, F, D, W, S):
 
 
 # Goh et al 2014 (Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.)
-def Goh(mode, M, R, T, F, D, W, S):
+def calc_ls_goh(mode, M, R, T, F, D, W, S):
     if mode == 'f':
         BF1 = max(0., np.log10(T) - 0.699)
         BF2 = max(0., 0.699 - np.log10(T))
@@ -139,11 +139,12 @@ verification_figures = 998
 
 
 # Draws a plot of the predicted values vs. measured values of the method
-def verify(method, data):
+def verify_ls_model(ls_calculation_method, data):
+    # NOTE: only point-based ls_calc models could be passed as ls_calculation_method
     data_FreeFace = data.loc[data.loc[:, 'b0'] == 1, :]  # free face points, 'f'
     data_Slope = data.loc[data.loc[:, 'b0'] == 0, :]  # sloping ground points. 's'
 
-    print(str(method))
+    print(str(ls_calculation_method))
     global verification_figures
     verification_figures += 2
     plt.figure(verification_figures)  # free face ************************
@@ -156,7 +157,7 @@ def verify(method, data):
         args = ('f',)
         args = args + tuple(data_FreeFace.iloc[i, [3, 4, 5, 6, 7, 8]].values)
         args = args + tuple([0]) # setting S = 0 in this case
-        Yi = method(*args)
+        Yi = ls_calculation_method(*args)
         MSE += (data_FreeFace.iloc[i, 1] - Yi)**2/(len(data_FreeFace))
         y.append(Yi)
     plt.scatter(x, y)
@@ -202,7 +203,7 @@ def verify(method, data):
         args = args + tuple(data_Slope.iloc[i, [3, 4, 5, 6, 7]].values)
         args = args + tuple([0])  # setting W = 0
         args = args + tuple(data_Slope.iloc[i, [9]].values)
-        Yi = method(*args)
+        Yi = ls_calculation_method(*args)
         MSE += (data_Slope.iloc[i, 1] - Yi) ** 2 / (len(data_Slope))
         y.append(Yi)
     plt.scatter(x, y)
@@ -246,9 +247,9 @@ if __name__=='__main__':
 
     # an example of how to get horizontal ground displacement predictions from the Bartlett's MLR model:
     # a) running on a single point
-    print(Bartlett(mode='f', M=7.217982, R=18.385526, T=8.567101, F=17.115035, D=0.359680, W=10.656302, S=0))  # returns predicted values of Bartlett's MLR method at a single point
+    print(calc_ls_bartlett(mode='f', M=7.217982, R=18.385526, T=8.567101, F=17.115035, D=0.359680, W=10.656302, S=0))  # returns predicted values of Bartlett's MLR method at a single point
 
     # b) running on a database
-    verify(Bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
+    verify_ls_model(calc_ls_bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
     plt.show()  # shows the plots
 

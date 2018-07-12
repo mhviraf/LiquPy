@@ -235,7 +235,7 @@ class Borehole:
 
     # Analytical methods for lateral spread and settlement analysis ************************************************************
     # Zhang, G., Robertson, P. K., & Brachman, R. W. I. (2004). Estimating liquefaction-induced lateral displacements using the standard penetration test or cone penetration test. Journal of Geotechnical and Geoenvironmental Engineering, 130(8), 861-871.
-    def zhang2004(self, save_to_file=False, file_name='lateral_spread_analysis'):
+    def calc_ls_zhang2004(self, save_to_file=False, file_name='lateral_spread_analysis'):
         try:
             for i, row in self.new_bore_log_data.iterrows():
                 if i == 0:
@@ -297,8 +297,8 @@ if __name__ == '__main__':
     log1.save_to_file('triggering_analysis_on_log_from_Idriss_and_Boulanger')
 
     # 6. (optional) run lateral spread and settlement analysis based on Zhang & Robinson's model
-    # attention: you need to run simplified_liquefaction_triggering_fos() Method on the log before running this Method
-    log1.zhang2004(save_to_file=True, file_name='zhang2004_lateral_spread_analysis')
+    # NOTE: you need to run simplified_liquefaction_triggering_fos() Method on the log before running this Method
+    log1.calc_ls_zhang2004(save_to_file=True, file_name='zhang2004_lateral_spread_analysis')
 
 
 

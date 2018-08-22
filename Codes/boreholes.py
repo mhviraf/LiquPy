@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import warnings
 
 # borehole object
 class Borehole:
@@ -31,7 +31,7 @@ class Borehole:
     def __del__(self):
         Borehole.number_of_holes -= 1
 
-    # simplified liquefaction triggering analysis
+    # simplified liquefaction triggering analysis - stress-based
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
                                                liner_correction_factor, hammer_energy, rod_extension):
         self.Pa = Pa  # Peak ground acceleration (g)
@@ -273,7 +273,7 @@ class Borehole:
                 print(file_name + '.xls has been saved.')
 
         except AttributeError:
-            print('Lateral spread and settlement analysis could not be done! Simplified liquefaction triggering analysis needs to be done first.')
+            warnings.warn('Lateral spread and settlement analysis could not be done! Simplified liquefaction triggering analysis needs to be done first.')
 
 
 if __name__ == '__main__':

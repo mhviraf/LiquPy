@@ -3,6 +3,16 @@
 
 This open-source Python library is an attempt to facilitate research on soil liquefaction and lateral spreads by providing researchers/engineers with premade/verified Python codes.
 
+### User installation:
+The easiest way to install scikit-learn is using `pip`:
+```
+pip install -U liqupy
+```
+
+or `conda`:
+```
+conda install liqupy
+```
 
 If you are willing to contribute or found bugs write an email to massoud.hosseinali@utah.edu
 

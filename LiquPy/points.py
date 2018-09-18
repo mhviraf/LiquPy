@@ -1,6 +1,6 @@
 # **************************************************************************************
-# LiquePy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
-# https://github.com/LiquePy/LiquePy
+# LiquPy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
+# https://github.com/LiquPy/LiquPy
 # **************************************************************************************
 
 # parameters are defined based on the definitions given in Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.

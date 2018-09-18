@@ -1,6 +1,6 @@
 # **************************************************************************************
-# LiquePy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
-# https://github.com/LiquePy/LiquePy
+# LiquPy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
+# https://github.com/LiquPy/LiquPy
 # **************************************************************************************
 
 __all__ = ['verify_ls_model',

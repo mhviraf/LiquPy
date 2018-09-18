@@ -28,7 +28,9 @@ Use of the following functions of our library is not recommended since their res
 
 
 ### Dependencies:
-Install the following Python dependencies before using these codes:
+Python (>= 3.5)
+
+Also, if you are not installing LiquPy through `pip install LiquPy`,  install the following Python dependencies before using these codes:
  - numpy (http://www.numpy.org/)
  - pandas (https://pandas.pydata.org/)
  - sklearn (https://scikit-learn.org)

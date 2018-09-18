@@ -13,4 +13,7 @@ __all__ = ['verify_ls_model',
            'calc_ls_goh',
            'verify_ls_model']
 
+__version__ = '0.1dev'
+
+name = 'LiquPy'
 

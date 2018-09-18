@@ -5,10 +5,10 @@
 
 # parameters are defined based on the definitions given in Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.
 # mode = 'f': Free-face & 's': sloping ground (not defined in Youd et al. 2002)
-# R = R5the nearest horizontal or map distance from the site to the seismic energy source, in kilometers
+# R = the horizontal or mapped distance from the site in question to the nearest bound of the seismic energy source, in kilometers
 # M = the moment magnitude of the earthquake
 # T = the cumulative thickness of saturated granular layers with corrected blow counts, (N1)60, less than 15, in meters
-# F = the average fines content ~fraction of sediment sample passing a No. 200 sieve! for granular materials included within T , in percent
+# F = the average fines content (fraction of sediment sample passing a No. 200 sieve) for granular materials included within T , in percent
 # D = the average mean grain size for granular materials within T15, in millimeters
 # S = the ground slope, in percent
 # W = the free-face ratio defined as the height (H) of the free face divided by the distance (L) from the base of the free face to the point in question, in percent
@@ -250,6 +250,6 @@ if __name__=='__main__':
     print(calc_ls_bartlett(mode='f', M=7.217982, R=18.385526, T=8.567101, F=17.115035, D=0.359680, W=10.656302, S=0))  # returns predicted values of Bartlett's MLR method at a single point
 
     # b) running on a database
-    verify_ls_model(calc_ls_bartlett, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
+    verify_ls_model(calc_ls_baziar2013, default_dataset)  # plots predicted vs. measured displacements + residuals of Bartlett's method on YoudHansenBartlett2002_demo dataset
     plt.show()  # shows the plots
 

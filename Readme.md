@@ -5,9 +5,14 @@ This open-source Python library is an attempt to facilitate research on soil liq
 
 ### User installation:
 The easiest way to install scikit-learn is using `pip`:
-```pip install -U liqupy```
+```
+pip install -U liqupy
+```
+
 or `conda`:
-```conda install liqupy```
+```
+conda install liqupy
+```
 
 If you are willing to contribute or found bugs write an email to massoud.hosseinali@utah.edu
 

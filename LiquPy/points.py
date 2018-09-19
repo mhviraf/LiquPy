@@ -181,7 +181,8 @@ def verify_ls_model(ls_calculation_method, data):
     print('Free face:')
     print('Data length = {}'.format(len(y)))
     print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE/len(data_FreeFace)), r2_score(x, y)))
-
+    
+    
     # residuals
     plt.figure(verification_figures+1)
     plt.subplot(1, 2, 1)
@@ -208,7 +209,6 @@ def verify_ls_model(ls_calculation_method, data):
         y.append(Yi)
     plt.scatter(x, y)
     plt.xlabel('measured (m)')
-    plt.ylabel('predicted (m)')
 
     if min(y) > 0:
         plt.xlim(xmin=0)
@@ -223,6 +223,7 @@ def verify_ls_model(ls_calculation_method, data):
     plt.plot([pltlim[0], pltlim[1]], [pltlim[0], pltlim[1]/2], 'g--')
     plt.plot([pltlim[0], pltlim[1]/2], [pltlim[0], pltlim[1]], 'g--')
     plt.title('Sloping ground')
+    plt.tight_layout()
     print('Sloping ground:')
     print('Data length = {}'.format(len(y)))
     print('MSE = {}; RMSE = {}; r2= {}'.format(MSE, np.sqrt(MSE / len(data_FreeFace)), r2_score(x, y)))
@@ -237,8 +238,8 @@ def verify_ls_model(ls_calculation_method, data):
     plt.plot(pltlim, [0, 0], 'g--')
     plt.title('Sloping ground')
     plt.xlabel('Measured displacement')
-    plt.ylabel('Residuals')
     plt.ylim([-5, 5])
+    plt.tight_layout()
 
 
 if __name__=='__main__':

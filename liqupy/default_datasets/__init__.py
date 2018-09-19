@@ -2,13 +2,9 @@
 # LiquPy: Open-source Python Library for Soil Liquefaction and Lateral Spread Analysis
 # https://github.com/LiquPy/LiquPy
 # **************************************************************************************
-from . import points 
-from . import boreholes
 
-__all__ = ['points',
-           'boreholes']
+from .base import load_youd_bartlett_demo
+from .base import load_spt_idriss_boulanger
 
-__version__ = '0.12'
-
-name = 'LiquPy'
-
+__all__ = ['load_youd_bartlett_demo',
+           'load_spt_idriss_boulanger']

@@ -14,6 +14,16 @@
 # W = the free-face ratio defined as the height (H) of the free face divided by the distance (L) from the base of the free face to the point in question, in percent
 # b0 = 1 for free face and 0 for sloping ground data points
 
+
+__all__ = ['calc_ls_bartlett',
+           'calc_ls_bardet',
+           'calc_ls_javadi2006',
+           'calc_ls_javadi_moderate2006',
+           'calc_ls_rezania',
+           'calc_ls_baziar2013',
+           'calc_ls_goh',
+           'verify_ls_model']
+
 # dependencies
 import pandas as pd
 import matplotlib.pyplot as plt

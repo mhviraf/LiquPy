@@ -17,10 +17,12 @@ class Borehole:
     viz_liquefied_text_kwargs = {'color': (0, 0, 0, 0.4), 'horizontalalignment': 'center', 'verticalalignment': 'center'}
     viz_dashed_guidelines = {'color': (0, 0, 1, 0.05), 'ls': '--'}
 
-    def __init__(self, bore_log_data, units='metric'):
+    def __init__(self, bore_log_data, name=None, units='metric'):
         Borehole.number_of_holes += 1
 
         self.bore_log_data = bore_log_data
+        self.name = name
+        
         if units == 'metric':
             self.units_length = 'm'
             self.units_area = '$m^2$'
@@ -225,6 +227,8 @@ class Borehole:
         ax[2].set(xlabel='FACTOR OF SAFETY', xlim=[0, fos_plot_max_x])
         ax[2].set_ylim(top=0, bottom=total_depth)
 
+        if self.name != None:
+            fig.suptitle(self.name, fontsize=14, y=.99)
         plt.show()
 
 

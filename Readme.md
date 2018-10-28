@@ -20,7 +20,7 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 ### What is included?
 So far the following methods have been added:
   - under "boreholes.py":
-    - Simplified factor of safety for triggering of soil liquefaction based on methods 
+    - Simplified factor of safety for triggering of soil liquefaction
        * Adjustments for fines content from (1) Boulanger and Idriss (2004), and (2) Cetin et al. (2004)
        * Shear stress reduction factors available from (1) Golesorkhi 1989, (2) Idriss 1999, and (3) Liao & Whitman 1986
        * Magnitude scaling factor from Idriss (1999)
@@ -28,12 +28,13 @@ So far the following methods have been added:
        * Triggering correlation of liquefaction in clean sands from Idriss and Boulanger (2004)
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "points.py":
-    - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
-    - Multi Linear Regression (MLR) (Bardet et al. 2002)
-    - Genetic programming (Javadi et al. 2006)
-    - Evolutionary-based approach (Rezania et al. 2011)
-    - Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
-    - Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
+    - Lateral spread analysis from:
+       * Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
+       * Multi Linear Regression (MLR) (Bardet et al. 2002)
+       * Genetic programming (Javadi et al. 2006)
+       * Evolutionary-based approach (Rezania et al. 2011)
+       * Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) *Read below
+       * Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) *Read below
 
 ### What is not verified yet?
 Use of the following functions of our library is not recommended since their results differ from what is given in their original papers; please note it does not mean these models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend using these functions of our library:

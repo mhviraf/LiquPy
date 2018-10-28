@@ -28,7 +28,7 @@ So far the following methods have been added:
        * Triggering correlation of liquefaction in clean sands from Idriss and Boulanger (2004)
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "points.py":
-    - Lateral spread analysis from:
+    - Lateral spread analysis 
        * Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
        * Multi Linear Regression (MLR) (Bardet et al. 2002)
        * Genetic programming (Javadi et al. 2006)
@@ -38,15 +38,16 @@ So far the following methods have been added:
 
 ### What is not verified yet?
 Use of the following functions of our library is not recommended since their results differ from what is given in their original papers; please note it does not mean these models are incorrect. However, we were unable to replicate them in this library and therefore would not recommend using these functions of our library:
-  - under "Analysis_on_points.py":
-    - Baziar2013()
-    - Goh()
+  - under "points.py":
+    - Lateral spread analysis 
+       * Artificial Neural Network & Genetic Algorithm (Baziar & Azizkani 2013) 
+       * Multivariate Adaptive Regression Splines (MARS) (Goh et al. 2014) 
 
 
 ### Dependencies:
 Python (>= 3.5)
 
-Also, if you are not installing LiquPy through `pip install LiquPy`,  install the following Python dependencies before using these codes:
+Also, if you are NOT installing LiquPy through `pip install LiquPy`,  install the following Python dependencies before using these codes:
  - numpy (http://www.numpy.org/)
  - pandas (https://pandas.pydata.org/)
  - sklearn (https://scikit-learn.org)

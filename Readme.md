@@ -20,9 +20,12 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 ### What is included?
 So far the following methods have been added:
   - under "boreholes.py":
-    - Simplified factor of safety for triggering of soil liquefaction based on methods described in Idriss & Boulanger (2008)
-    -- Shear stress reduction factors available (1) Liao & Whitman 1986, and (2) Idriss 1999 
+    - Simplified factor of safety for triggering of soil liquefaction based on methods 
+    -- Shear stress reduction factors available from (1) Liao & Whitman 1986, and (2) Idriss 1999 
        rd_method argument in simplified_liquefaction_triggering_fos()
+    -- Magnitude scaling factor from Idriss (1999)
+    -- Overburden correction factor from Boulanger and Idriss (2004)
+    -- Triggering correlation of liquefaction in clean sands from Idriss and Boulanger (2004)
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "points.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
@@ -52,8 +55,10 @@ Also, if you are not installing LiquPy through `pip install LiquPy`,  install th
  ### References:
  - Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.
  - Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.
+ - Boulanger, R. W., & Idriss, I. M. (2004). State normalization of penetration resistance and the effect of overburden stress on liquefaction resistance. Proceedings 11th SDEE and 3rd ICEGE, Uni of California, Berkeley, CA.
  - Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.
  - Idriss, I. M. (1999). An update to the Seed-Idriss simplified procedure for evaluating liquefaction potential. Proc., TRB Worshop on New Approaches to Liquefaction, Pubbl. n. FHWA-RD-99-165, Federal Highway Administation.
+ - Idriss, I. M., & Boulanger, R. W. (2006). Semi-empirical procedures for evaluating liquefaction potential during earthquakes. Soil Dynamics and Earthquake Engineering, 26(2-4), 115-130.
  - Idriss, I. M., & Boulanger, R. W. (2008). Soil liquefaction during earthquakes. Earthquake Engineering Research Institute.
  - Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.
  - Liao, S. S., & Whitman, R. V. (1986). A catalog of liquefaction and non-liquefaction occurrences during earthquakes. Department of Civil Engineering, MIT.

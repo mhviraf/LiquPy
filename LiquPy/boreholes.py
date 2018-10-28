@@ -86,15 +86,17 @@ class Borehole:
 
                 N160 = CN*N60  #  (N1)60 proposed by Liao and Whitman (1986)
 
+                # Corrections for silty sands; to take into account the effect of fines content
                 delta_n = np.exp(1.63 + 9.7/(row[5]+0.01) - (15.7/(row[5]+0.01))**2)
                 N160cs = N160 + delta_n
 
             # Shear stress reduction factor (depth in meters)
-            # Idriss (1999), default argument
             if self.rd_method=='Idriss1999':
+                # Idriss (1999), default value
                 rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
-            #Liao and Whitman (1986)
+
             elif self.rd_method == 'LiaoWhitman1986':
+                # Liao and Whitman (1986)
                 if row[1] <= 9.15:
                     rd = 1 - 0.00765*row[1]
                 else:
@@ -109,9 +111,16 @@ class Borehole:
                 MSF = 'n.a'
                 k_sigma = 'n.a.'
             else:
+                # Magnitude scaling factor
+                # Idriss (1999), default value
                 MSF = min(1.8, 6.9 * np.exp(-M / 4) - 0.058)
+
+                # Overburden correction factor
+                # Boulanger and Idriss (2004)
                 k_sigma = min(1.1, 1 - (min(0.3, 1 / (18.9 - 2.55 * np.sqrt(N160cs)))) * np.log(sigmavp / 100))
 
+                # SPT Triggering correlation of liquefaction in clean sands
+                # Idriss and Boulanger (2004)
                 if N160cs < 37.5:
                     CRR0 = np.exp(N160cs / 14.1 + (N160cs / 126) ** 2 - (N160cs / 23.6) ** 3 + (N160cs / 25.4) ** 4 - 2.8)
                 else:

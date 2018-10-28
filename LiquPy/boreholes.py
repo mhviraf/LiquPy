@@ -91,9 +91,15 @@ class Borehole:
                 N160cs = N160 + delta_n
 
             # Shear stress reduction factor (depth in meters)
+            if row[1] > 20:
+                warnings.warn('CSR (or equivalent rd values) at depths greater than about 20 m should be based on site response studies (Idriss and Boulanger, 2004)')
+                
             if self.rd_method=='Idriss1999':
                 # Idriss (1999), default value
-                rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
+                if row[1] <= 34:
+                    rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
+                else:
+                    rd = 0.12*exp(0.22*M)
 
             elif self.rd_method == 'LiaoWhitman1986':
                 # Liao and Whitman (1986)

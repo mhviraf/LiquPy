@@ -21,11 +21,12 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 So far the following methods have been added:
   - under "boreholes.py":
     - Simplified factor of safety for triggering of soil liquefaction based on methods 
-       * Shear stress reduction factors available from (1) Liao & Whitman 1986, and (2) Idriss 1999 
+       * Adjustments for fines content from (1) Boulanger and Idriss (2004), and (2) Cetin et al. (2004)
+       * Shear stress reduction factors available from (1) Golesorkhi 1989, (2) Idriss 1999, and (3) Liao & Whitman 1986
        * Magnitude scaling factor from Idriss (1999)
        * Overburden correction factor from Boulanger and Idriss (2004)
        * Triggering correlation of liquefaction in clean sands from Idriss and Boulanger (2004)
-       * Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
+    - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "points.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
     - Multi Linear Regression (MLR) (Bardet et al. 2002)
@@ -55,7 +56,9 @@ Also, if you are not installing LiquPy through `pip install LiquPy`,  install th
  - Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.
  - Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.
  - Boulanger, R. W., & Idriss, I. M. (2004). State normalization of penetration resistance and the effect of overburden stress on liquefaction resistance. Proceedings 11th SDEE and 3rd ICEGE, Uni of California, Berkeley, CA.
+ - Cetin, K. O., Seed, R. B., Der Kiureghian, A., Tokimatsu, K., Harder Jr, L. F., Kayen, R. E., & Moss, R. E. (2004). Standard penetration test-based probabilistic and deterministic assessment of seismic soil liquefaction potential. Journal of geotechnical and geoenvironmental engineering, 130(12), 1314-1340.
  - Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.
+ - Golesorkhi, R. (1989). Factors influencing the computational determination of earthquake-induced shear stresses in sandy soils. University of California, Berkeley.
  - Idriss, I. M. (1999). An update to the Seed-Idriss simplified procedure for evaluating liquefaction potential. Proc., TRB Worshop on New Approaches to Liquefaction, Pubbl. n. FHWA-RD-99-165, Federal Highway Administation.
  - Idriss, I. M., & Boulanger, R. W. (2006). Semi-empirical procedures for evaluating liquefaction potential during earthquakes. Soil Dynamics and Earthquake Engineering, 26(2-4), 115-130.
  - Idriss, I. M., & Boulanger, R. W. (2008). Soil liquefaction during earthquakes. Earthquake Engineering Research Institute.

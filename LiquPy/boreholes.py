@@ -35,7 +35,7 @@ class Borehole:
 
     # simplified liquefaction triggering analysis - stress-based
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
-                                               liner_correction_factor, hammer_energy, rod_extension, rd_method='Idriss1999'):
+                                               liner_correction_factor, hammer_energy, rod_extension, rd_method='Idriss1999', fc_method = 'BI2004'):
         self.Pa = Pa  # Peak ground acceleration (g)
         self.M = M  # Earthquake magnitude
         self.Zw = Zw  # water table depth (in self.units_length units)
@@ -44,6 +44,7 @@ class Borehole:
         self.hammer_energy = hammer_energy
         self.rod_extension = rod_extension
         self.rd_method= rd_method
+        self.fc_method = fc_method
 
         output = []
         sigmavp = 0
@@ -84,16 +85,28 @@ class Borehole:
                 else:
                     CN = min(1.7, np.sqrt(100 / sigmavp))
 
-                N160 = CN*N60  #  (N1)60 proposed by Liao and Whitman (1986)
+                N160 = CN*N60  #  use of (N1)60 proposed by Liao and Whitman (1986)
 
-                # Corrections for silty sands; to take into account the effect of fines content
-                delta_n = np.exp(1.63 + 9.7/(row[5]+0.01) - (15.7/(row[5]+0.01))**2)
-                N160cs = N160 + delta_n
+
+                # Adjustments for fines content
+                if self.fc_method = 'BI2004':
+                    # Boulanger & Idriss (2004), default
+                    delta_n = np.exp(1.63 + 9.7/(row[5]+0.01) - (15.7/(row[5]+0.01))**2)
+                    N160cs = N160 + delta_n
+                    
+                elif self.fc_method = 'cetin2004':
+                    # Cetin et al. (2004)
+                    if row[5] > 5 or row[5] < 35:
+                        warnings.warn('Cetin et al 2004 method of adjustments for fines content is only applicable to fines content in the range of 5% to 35%')
+                    c_fines = 1 + 0.004*row[5] + 0.05*row[5]/N160
+                    N160cs = N160*c_fines
+                
+
 
             # Shear stress reduction factor (depth in meters)
             if row[1] > 20:
                 warnings.warn('CSR (or equivalent rd values) at depths greater than about 20 m should be based on site response studies (Idriss and Boulanger, 2004)')
-                
+
             if self.rd_method=='Idriss1999':
                 # Idriss (1999), default value
                 if row[1] <= 34:
@@ -106,8 +119,13 @@ class Borehole:
                 if row[1] <= 9.15:
                     rd = 1 - 0.00765*row[1]
                 else:
-                    rd = 1.174 - 0.0267*row[1] 
-                
+                    rd = 1.174 - 0.0267*row[1]
+            elif self.rd_method == 'Golesorkhi1989':
+                if row[1] <= 24:
+                    rd = np.exp((-1.012-1.126*np.sin(row[1]/38.5+5.133)) + (0.106+0.118*np.sin(row[1]/37+5.142))*M)
+
+
+            # Earthquake-induced cyclic stress ratio (CSR)                
             CSR = 0.65*sigmav/sigmavp*Pa*rd
 
             if row[4] == 1 or row[1] < Zw:
@@ -131,6 +149,8 @@ class Borehole:
                     CRR0 = np.exp(N160cs / 14.1 + (N160cs / 126) ** 2 - (N160cs / 23.6) ** 3 + (N160cs / 25.4) ** 4 - 2.8)
                 else:
                     CRR0 = 2
+
+                # Cyclic resistance ratio (CRR)
                 CRR = min(2., CRR0*MSF*k_sigma)
                 if CRR/CSR > 2:
                     FoS = 2

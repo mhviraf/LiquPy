@@ -19,12 +19,12 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 
 ### What is included?
 So far the following methods have been added:
-  - under "Analysis_on_boreholes.py":
+  - under "boreholes.py":
     - Simplified factor of safety for triggering of soil liquefaction based on methods described in Idriss & Boulanger (2008)
     -- Shear stress reduction factors available (1) Liao & Whitman 1986, and (2) Idriss 1999 
        rd_method argument in simplified_liquefaction_triggering_fos()
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
-  - under "Analysis_on_points.py":
+  - under "points.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
     - Multi Linear Regression (MLR) (Bardet et al. 2002)
     - Genetic programming (Javadi et al. 2006)

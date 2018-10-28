@@ -35,7 +35,7 @@ class Borehole:
 
     # simplified liquefaction triggering analysis - stress-based
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
-                                               liner_correction_factor, hammer_energy, rod_extension):
+                                               liner_correction_factor, hammer_energy, rod_extension, rd_method='Idriss1999'):
         self.Pa = Pa  # Peak ground acceleration (g)
         self.M = M  # Earthquake magnitude
         self.Zw = Zw  # water table depth (in self.units_length units)
@@ -43,6 +43,7 @@ class Borehole:
         self.liner_correction_factor = liner_correction_factor
         self.hammer_energy = hammer_energy
         self.rod_extension = rod_extension
+        self.rd_method= rd_method
 
         output = []
         sigmavp = 0
@@ -88,8 +89,17 @@ class Borehole:
                 delta_n = np.exp(1.63 + 9.7/(row[5]+0.01) - (15.7/(row[5]+0.01))**2)
                 N160cs = N160 + delta_n
 
-            rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
-
+            # Shear stress reduction factor (depth in meters)
+            # Idriss (1999), default argument
+            if self.rd_method=='Idriss1999':
+                rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
+            #Liao and Whitman (1986)
+            elif self.rd_method == 'LiaoWhitman1986':
+                if row[1] <= 9.15:
+                    rd = 1 - 0.00765*row[1]
+                else:
+                    rd = 1.174 - 0.0267*row[1] 
+                
             CSR = 0.65*sigmav/sigmavp*Pa*rd
 
             if row[4] == 1 or row[1] < Zw:

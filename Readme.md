@@ -20,7 +20,9 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 ### What is included?
 So far the following methods have been added:
   - under "Analysis_on_boreholes.py":
-    - Simplified factor of safety for triggering of soil liquefaction based on Idriss & Boulanger (2008)
+    - Simplified factor of safety for triggering of soil liquefaction based on methods described in Idriss & Boulanger (2008)
+    -- Shear stress reduction factors available (1) Liao & Whitman 1986, and (2) Idriss 1999 
+       rd_method argument in simplified_liquefaction_triggering_fos()
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "Analysis_on_points.py":
     - Multi Linear Regression (MLR) (Youd, Hansen, & Bartlett 2002)
@@ -51,8 +53,10 @@ Also, if you are not installing LiquPy through `pip install LiquPy`,  install th
  - Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.
  - Baziar, M. H., & Saeedi Azizkandi, A. (2013). Evaluation of lateral spreading utilizing artificial neural network and genetic programming. International Journal of Civil Engineering, (2), 100-111.
  - Goh, A. T., & Zhang, W. G. (2014). An improvement to MLR model for predicting liquefaction-induced lateral spread using multivariate adaptive regression splines. Engineering Geology, 170, 1-10.
+ - Idriss, I. M. (1999). An update to the Seed-Idriss simplified procedure for evaluating liquefaction potential. Proc., TRB Worshop on New Approaches to Liquefaction, Pubbl. n. FHWA-RD-99-165, Federal Highway Administation.
  - Idriss, I. M., & Boulanger, R. W. (2008). Soil liquefaction during earthquakes. Earthquake Engineering Research Institute.
  - Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.
+ - Liao, S. S., & Whitman, R. V. (1986). A catalog of liquefaction and non-liquefaction occurrences during earthquakes. Department of Civil Engineering, MIT.
  - Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.
  - Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.
  - Zhang, G., Robertson, P. K., & Brachman, R. W. I. (2004). Estimating liquefaction-induced lateral displacements using the standard penetration test or cone penetration test. Journal of Geotechnical and Geoenvironmental Engineering, 130(8), 861-871.

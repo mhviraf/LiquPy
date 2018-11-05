@@ -43,42 +43,42 @@ class Borehole:
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw=0, sampler_correction_factor=1,
                                                liner_correction_factor=1., hammer_energy=60, rod_extension=1, output='fs',
                                                rd_method='Idriss1999', fc_method = 'BI2004', fs_threshold=1., prob_threshold=0.5):
-    """ simplified liquefaction triggering analysis - stress-based
+        """ simplified liquefaction triggering analysis - stress-based
 
-    Parameters
-    ----------
-    Pa : float
-      Peak ground acceleration (g)
+        Parameters
+        ----------
+        Pa : float
+          Peak ground acceleration (g)
 
-    M : float
-      Earthquake magnitude
+        M : float
+          Earthquake magnitude
 
-    Zw : float, default=0
-      water table depth (in self.units_length units)
+        Zw : float, default=0
+          water table depth (in self.units_length units)
 
-    sampler_correction_factor : float, default=1
+        sampler_correction_factor : float, default=1.
 
-    liner_correction_factor : float, default=1
+        liner_correction_factor : float, default=1.
 
-    hammer_energy : float, default=60
+        hammer_energy : float, default=60.
 
-    rod_extension : float, default=1
+        rod_extension : float, default=1.
 
-    output : 'fs' or 'probability', default='fs'
-      determines the approach, deterministic or probabilistic
-      
-    rd_method : in ['Idriss1999', 'LiaoWhitman1986', 'Golesorkhi1989'], default= 'Idriss1999'
-      Method of shear stress reduction factor
-      
-    fc_method : in ['BI2004', 'cetin2004'] , default= 'BI2004'
-      Method of adjustments for fines content
+        output : 'fs' or 'probability', default='fs'
+          determines the approach, deterministic or probabilistic
+          
+        rd_method : in ['Idriss1999', 'LiaoWhitman1986', 'Golesorkhi1989'], default= 'Idriss1999'
+          Method of shear stress reduction factor
+          
+        fc_method : in ['BI2004', 'cetin2004'] , default= 'BI2004'
+          Method of adjustments for fines content
 
-    fs_threshold : , default=1
-      Factor of safety threshold to consider soild as liqufied
+        fs_threshold : float, default=1.
+          Factor of safety threshold to consider soild as liqufied
 
-    prob_threshold :, default=0.5
-      Probability threshold to consider soild as liqufied
-    """
+        prob_threshold : float, default=0.5
+          Probability threshold to consider soild as liqufied
+        """
     
         self.Pa = Pa
         self.M = M
@@ -356,7 +356,7 @@ class Borehole:
                 fs_0 = fs_1
                 depth_0 = depth_1
                 
-            ax[2].plot([1, 1], [0, total_depth], '--', color=(0, 0, 0, 0.1))
+            ax[2].plot([self.fs_threshold, self.fs_threshold], [0, total_depth], '--', color=(0, 0, 0, 0.1))
             ax[2].set(xlabel='FACTOR OF SAFETY', xlim=[0, fos_plot_max_x])
             ax[2].set_ylim(top=0, bottom=total_depth)
             
@@ -373,7 +373,7 @@ class Borehole:
                 fs_0 = fs_1
                 depth_0 = depth_1
                 
-            ax[2].plot([.5, .5], [0, total_depth], '--', color=(0, 0, 0, 0.1))
+            ax[2].plot([self.prob_threshold, self.prob_threshold], [0, total_depth], '--', color=(0, 0, 0, 0.1))
             ax[2].set(xlabel='Probability', xlim=[0, 1])
             ax[2].set_ylim(top=0, bottom=total_depth)
 

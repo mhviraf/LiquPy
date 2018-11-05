@@ -20,12 +20,13 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 ### What is included?
 So far the following methods have been added:
   - under "boreholes.py":
-    - Simplified factor of safety for triggering of soil liquefaction
+    - Simplified liqufaction triggering analysis
        * Adjustments for fines content from (1) Boulanger and Idriss (2004), and (2) Cetin et al. (2004)
        * Shear stress reduction factors available from (1) Golesorkhi 1989, (2) Idriss 1999, and (3) Liao & Whitman 1986
        * Magnitude scaling factor from Idriss (1999)
        * Overburden correction factor from Boulanger and Idriss (2004)
        * Triggering correlation of liquefaction in clean sands from Idriss and Boulanger (2004)
+       * Probabilistic approaches from Cetin et al. (2004)
     - Lateral Displacement Index (LDI) and settlement (Zhang et al. 2004)
   - under "points.py":
     - Lateral spread analysis 

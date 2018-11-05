@@ -7,6 +7,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import warnings
+from math import erf
+
+def normcdf(x):
+    #'Cumulative distribution function for the standard normal distribution'
+    return (1.0 + erf(x / np.sqrt(2.0))) / 2.0
 
 # borehole object
 class Borehole:
@@ -35,7 +40,8 @@ class Borehole:
 
     # simplified liquefaction triggering analysis - stress-based
     def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
-                                               liner_correction_factor, hammer_energy, rod_extension, rd_method='Idriss1999', fc_method = 'BI2004'):
+                                               liner_correction_factor, hammer_energy, rod_extension, output='fs',
+                                               rd_method='Idriss1999', fc_method = 'BI2004', fs_threshold=1, prob_threshold=0.5):
         self.Pa = Pa  # Peak ground acceleration (g)
         self.M = M  # Earthquake magnitude
         self.Zw = Zw  # water table depth (in self.units_length units)
@@ -45,6 +51,9 @@ class Borehole:
         self.rod_extension = rod_extension
         self.rd_method= rd_method
         self.fc_method = fc_method
+        self.output = output # takes in "fs" for factor of safety, and, 'probability' for probability
+        self.fs_threshold = fs_threshold # Factor of safety threshold to consider soild as liqufied
+        self.prob_threshold = prob_threshold # Probability threshold to consider soild as liqufied
 
         output = []
         sigmavp = 0
@@ -89,12 +98,12 @@ class Borehole:
 
 
                 # Adjustments for fines content
-                if self.fc_method = 'BI2004':
+                if self.fc_method == 'BI2004':
                     # Boulanger & Idriss (2004), default
                     delta_n = np.exp(1.63 + 9.7/(row[5]+0.01) - (15.7/(row[5]+0.01))**2)
                     N160cs = N160 + delta_n
                     
-                elif self.fc_method = 'cetin2004':
+                elif self.fc_method == 'cetin2004':
                     # Cetin et al. (2004)
                     if row[5] > 5 or row[5] < 35:
                         warnings.warn('Cetin et al 2004 method of adjustments for fines content is only applicable to fines content in the range of 5% to 35%')
@@ -121,6 +130,7 @@ class Borehole:
                 else:
                     rd = 1.174 - 0.0267*row[1]
             elif self.rd_method == 'Golesorkhi1989':
+                # Golesorkhi (1989)
                 if row[1] <= 24:
                     rd = np.exp((-1.012-1.126*np.sin(row[1]/38.5+5.133)) + (0.106+0.118*np.sin(row[1]/37+5.142))*M)
 
@@ -134,6 +144,7 @@ class Borehole:
                 FoS = 'n.a.'
                 MSF = 'n.a'
                 k_sigma = 'n.a.'
+                Probability = 'n.a.'
             else:
                 # Magnitude scaling factor
                 # Idriss (1999), default value
@@ -152,19 +163,42 @@ class Borehole:
 
                 # Cyclic resistance ratio (CRR)
                 CRR = min(2., CRR0*MSF*k_sigma)
-                if CRR/CSR > 2:
-                    FoS = 2
+
+                if self.output == 'fs':
+                    if CRR/CSR > 2:
+                        FoS = 2
+                    else:
+                        FoS = CRR/CSR
+
                 else:
-                    FoS = CRR/CSR
+                    # Cetin et al. (2004)
+                    Probability = normcdf(-1*(N160cs - 13.32*np.log(CSR) - 29.53*np.log(M) - 3.7*np.log(sigmavp / 100) + 16.85)/2.7)
 
 
             depth = row[1]
             gamma = row[6]
 
-            output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, delta_n, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, FoS])
-
-        self.new_bore_log_data = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'delta_n', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'FS'])
-
+            if self.output == 'fs':
+                if self.fc_method == 'BI2004':
+                    output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, delta_n, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, FoS])
+                elif self.fc_method == 'cetin2004':
+                    output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, c_fines, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, FoS])
+            else:
+                if self.fc_method == 'BI2004':
+                    output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, delta_n, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, Probability])
+                elif self.fc_method == 'cetin2004':
+                    output.append([row[1], ce, cb, cr, cs, N60, sigmav, sigmavp, CN, N160, c_fines, N160cs, rd, CSR, MSF, k_sigma, CRR0, CRR, Probability])
+                
+        if self.output == 'fs':
+            if self.fc_method == 'BI2004':
+                self.new_bore_log_data = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'delta_n', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'FS'])
+            elif self.fc_method == 'cetin2004':
+                self.new_bore_log_data = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'c_fines', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'FS'])
+        else:
+            if self.fc_method == 'BI2004':
+                self.new_bore_log_data = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'delta_n', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'Probability'])
+            elif self.fc_method == 'cetin2004':
+                self.new_bore_log_data = pd.DataFrame(output, columns=['depth', 'ce', 'cb', 'cr', 'cs', 'N60', 'sigmav', 'sigmavp', 'CN', 'N160', 'c_fines', 'N160cs', 'rd', 'CSR', 'MSF', 'k_simga', 'CRR0', 'CRR', 'Probability'])
 
     # visualization of the liquefaction analysis
     def visualize(self):
@@ -177,7 +211,9 @@ class Borehole:
 
         soil_type_0 = ''
         depth_0 = 0
+        self.new_bore_log_data.N160 = self.new_bore_log_data.N160.astype('object')
         spt_plot_max_x = max(self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'N160'] != 'n.a.', 'N160'])*1.05
+        
         for i, row in self.bore_log_data.iterrows():
             soil_type_1 = row[3]
             depth_1 = -row[1]
@@ -207,7 +243,10 @@ class Borehole:
         na_0 = False
 
         csrcrr_plot_max_x = 1
-        fos_plot_max_x = self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'FS'] != 'n.a.', 'FS'].max()*1.1
+        if self.output == 'fs':
+            fos_plot_max_x = self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'FS'] != 'n.a.', 'FS'].max()*1.1
+        else:
+            fos_plot_max_x = 1
 
         for i, row in self.new_bore_log_data.iterrows():
             depth_1 = -row[0]
@@ -216,14 +255,23 @@ class Borehole:
             na_1 = False
             csr_1 = row['CSR']
             crr_1 = row['CRR']
-            if row['FS'] == 'n.a.':
-                na_1 = True
-                liquefiable_1 = False
-            elif row['FS'] > 1:
-                liquefiable_1 = False
+            if self.output == 'fs':
+                if row['FS'] == 'n.a.':
+                    na_1 = True
+                    liquefiable_1 = False
+                elif row['FS'] > self.fs_threshold: 
+                    liquefiable_1 = False
+                else:
+                    liquefiable_1 = True
             else:
-                liquefiable_1 = True
-
+                if row['Probability'] == 'n.a.':
+                    na_1 = True
+                    liquefiable_1 = False
+                elif row['Probability'] <= self.prob_threshold:
+                    liquefiable_1 = False
+                else:
+                    liquefiable_1 = True
+                    
             if i > 0:
                 if not na_1 and not na_0:
                     ax[1].plot([csr_0, csr_1], [depth_0, depth_1], 'k--')
@@ -257,20 +305,39 @@ class Borehole:
         ax[1].set(xlabel='CSR & CRR', xlim=[0, csrcrr_plot_max_x])
         ax[1].set_ylim(top=0, bottom=total_depth)
 
-        # subplot of Factor of safety
-        depth_0 = 0
-        fs_0 = 0
-        for i, row in self.new_bore_log_data.iterrows():
-            fs_1 = row['FS']
-            depth_1 = -row['depth']
-            if i > 0 and fs_1 != 'n.a.' and fs_0 != 'n.a.':
-                ax[2].plot([fs_0, fs_1], [depth_0, depth_1], 'k-')
+        if self.output == 'fs':
+            # subplot of Factor of safety
+            depth_0 = 0
+            fs_0 = 0
+            for i, row in self.new_bore_log_data.iterrows():
+                fs_1 = row['FS']
+                depth_1 = -row['depth']
+                if i > 0 and fs_1 != 'n.a.' and fs_0 != 'n.a.':
+                    ax[2].plot([fs_0, fs_1], [depth_0, depth_1], 'k-')
 
-            fs_0 = fs_1
-            depth_0 = depth_1
-        ax[2].plot([1, 1], [0, total_depth], '--', color=(0, 0, 0, 0.1))
-        ax[2].set(xlabel='FACTOR OF SAFETY', xlim=[0, fos_plot_max_x])
-        ax[2].set_ylim(top=0, bottom=total_depth)
+                fs_0 = fs_1
+                depth_0 = depth_1
+                
+            ax[2].plot([1, 1], [0, total_depth], '--', color=(0, 0, 0, 0.1))
+            ax[2].set(xlabel='FACTOR OF SAFETY', xlim=[0, fos_plot_max_x])
+            ax[2].set_ylim(top=0, bottom=total_depth)
+            
+        else:
+            # subplot of Liquefaction Probability
+            depth_0 = 0
+            fs_0 = 0
+            for i, row in self.new_bore_log_data.iterrows():
+                fs_1 = row['Probability']
+                depth_1 = -row['depth']
+                if i > 0 and fs_1 != 'n.a.' and fs_0 != 'n.a.':
+                    ax[2].plot([fs_0, fs_1], [depth_0, depth_1], 'k-')
+
+                fs_0 = fs_1
+                depth_0 = depth_1
+                
+            ax[2].plot([.5, .5], [0, total_depth], '--', color=(0, 0, 0, 0.1))
+            ax[2].set(xlabel='Probability', xlim=[0, 1])
+            ax[2].set_ylim(top=0, bottom=total_depth)
 
         if self.name != None:
             fig.suptitle(self.name, fontsize=14, y=.99)
@@ -337,7 +404,7 @@ if __name__ == '__main__':
     log1 = Borehole(spt_idriss_boulanger_bore_data_appendix_a)
 
     # 3. run simplified liquefaction triggering method on log1 to calculate factors of safety
-    log1.simplified_liquefaction_triggering_fos(Pa=0.280, M=6.9, Zw=1.8, sampler_correction_factor=1, liner_correction_factor=1, hammer_energy=75, rod_extension=1.5)
+    log1.simplified_liquefaction_triggering_fos(Pa=0.280, M=6.9, Zw=1.8, sampler_correction_factor=1, liner_correction_factor=1, hammer_energy=75, rod_extension=1.5, output='fs')
 
     # 4. (optional) visualize the output
     log1.visualize()

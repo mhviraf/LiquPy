@@ -10,11 +10,12 @@ import warnings
 from math import erf
 
 def normcdf(x):
-    #'Cumulative distribution function for the standard normal distribution'
+    # Cumulative distribution function for the standard normal distribution 
     return (1.0 + erf(x / np.sqrt(2.0))) / 2.0
 
-# borehole object
+
 class Borehole:
+# borehole object
 
     number_of_holes = 0
 
@@ -38,22 +39,59 @@ class Borehole:
     def __del__(self):
         Borehole.number_of_holes -= 1
 
-    # simplified liquefaction triggering analysis - stress-based
-    def simplified_liquefaction_triggering_fos(self, Pa, M, Zw, sampler_correction_factor,
-                                               liner_correction_factor, hammer_energy, rod_extension, output='fs',
-                                               rd_method='Idriss1999', fc_method = 'BI2004', fs_threshold=1, prob_threshold=0.5):
-        self.Pa = Pa  # Peak ground acceleration (g)
-        self.M = M  # Earthquake magnitude
-        self.Zw = Zw  # water table depth (in self.units_length units)
+    
+    def simplified_liquefaction_triggering_fos(self, Pa, M, Zw=0, sampler_correction_factor=1,
+                                               liner_correction_factor=1., hammer_energy=60, rod_extension=1, output='fs',
+                                               rd_method='Idriss1999', fc_method = 'BI2004', fs_threshold=1., prob_threshold=0.5):
+    """ simplified liquefaction triggering analysis - stress-based
+
+    Parameters
+    ----------
+    Pa : float
+      Peak ground acceleration (g)
+
+    M : float
+      Earthquake magnitude
+
+    Zw : float, default=0
+      water table depth (in self.units_length units)
+
+    sampler_correction_factor : float, default=1
+
+    liner_correction_factor : float, default=1
+
+    hammer_energy : float, default=60
+
+    rod_extension : float, default=1
+
+    output : 'fs' or 'probability', default='fs'
+      determines the approach, deterministic or probabilistic
+      
+    rd_method : in ['Idriss1999', 'LiaoWhitman1986', 'Golesorkhi1989'], default= 'Idriss1999'
+      Method of shear stress reduction factor
+      
+    fc_method : in ['BI2004', 'cetin2004'] , default= 'BI2004'
+      Method of adjustments for fines content
+
+    fs_threshold : , default=1
+      Factor of safety threshold to consider soild as liqufied
+
+    prob_threshold :, default=0.5
+      Probability threshold to consider soild as liqufied
+    """
+    
+        self.Pa = Pa
+        self.M = M
+        self.Zw = Zw
         self.sampler_correction_factor = sampler_correction_factor
         self.liner_correction_factor = liner_correction_factor
         self.hammer_energy = hammer_energy
         self.rod_extension = rod_extension
         self.rd_method= rd_method
         self.fc_method = fc_method
-        self.output = output # takes in "fs" for factor of safety, and, 'probability' for probability
-        self.fs_threshold = fs_threshold # Factor of safety threshold to consider soild as liqufied
-        self.prob_threshold = prob_threshold # Probability threshold to consider soild as liqufied
+        self.output = output 
+        self.fs_threshold = fs_threshold 
+        self.prob_threshold = prob_threshold 
 
         output = []
         sigmavp = 0

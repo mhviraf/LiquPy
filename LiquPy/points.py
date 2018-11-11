@@ -29,19 +29,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import r2_score, mean_squared_error
+import warnings
 
 # Empirical methods ************************************************************
 
 
 # MLR (Youd, T. L., Hansen, C. M., & Bartlett, S. F. (2002). Revised multilinear regression equations for prediction of lateral spread displacement. Journal of Geotechnical and Geoenvironmental Engineering, 128(12), 1007-1017.)
 def calc_ls_bartlett(mode, M, R, T, F, D, W, S):
+    if (M < 6) or (M > 8):
+        warnings.warn('Value of M not in recommended range by Youd et al. (2002): 6 < M < 8')
+    if (W < 1) or (W > 20):
+        warnings.warn('Value of W not in recommended range by Youd et al. (2002): 1 < W(%) < 20')
+    if (S < 0.1) or (S > 6):
+        warnings.warn('Value of S not in recommended range by Youd et al. (2002): 0.1 < S(%) < 6')
+    if (T < 1) or (T > 15):
+        warnings.warn('Value of T not in recommended range by Youd et al. (2002): 1 < T (m) < 15')
+    if R < 0.5:
+        R = 0.5
+        
     R0 = np.power(10, 0.89*M-5.64)
     Rstar = R + R0
     if mode == 'f':
         logDH = -16.713 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.592*np.log10(W) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
     elif mode == 's':
         logDH = -16.213 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.338*np.log10(S) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
-    return np.power(10, logDH)
+    Dh = np.power(10, logDH)
+    if Dh > 6:
+        warnings.warn('Flow failure may be possible and Youd et al. (2002) may not be applicable')
+    return Dh
 
 
 # Bardet et al 2002 (Bardet, J. P., Tobita, T., Mace, N., & Hu, J. (2002). Regional modeling of liquefaction-induced ground deformation. Earthquake Spectra, 18(1), 19-46.)

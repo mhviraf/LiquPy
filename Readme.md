@@ -21,6 +21,7 @@ If you are willing to contribute or found bugs write an email to massoud.hossein
 So far the following methods have been added:
   - under "boreholes.py":
     - Simplified liqufaction triggering analysis
+       * CRR based on Boulanger and Idriss (2004) & Boulanger and Idriss (2008)
        * Adjustments for fines content from (1) Boulanger and Idriss (2004), and (2) Cetin et al. (2004)
        * Shear stress reduction factors available from (1) Golesorkhi 1989, (2) Idriss 1999, and (3) Liao & Whitman 1986
        * Magnitude scaling factor from Idriss (1999)

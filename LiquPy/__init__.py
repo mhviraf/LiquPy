@@ -8,7 +8,7 @@ from . import boreholes
 __all__ = ['points',
            'boreholes']
 
-__version__ = '0.12'
+__version__ = '0.13.1'
 
 name = 'LiquPy'
 

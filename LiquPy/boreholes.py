@@ -122,10 +122,12 @@ class Borehole:
                 hydro_pore_pressure = (row[1]-Zw) * 9.81
             sigmavp = sigmav - hydro_pore_pressure
 
-            if row[4] == 1:
+            if row[4] == 1: # nonliquefiable
                 N60 = 'n.a.'
                 N160 = 'n.a.'
                 N160cs = 'n.a.'
+                CN = 1
+                delta_n = 1
             else:
                 if sigmavp == 0:
                     CN = 1
@@ -159,7 +161,7 @@ class Borehole:
                 if row[1] <= 34:
                     rd = np.exp((-1.012-1.126*np.sin(row[1]/11.73+5.133)) + (0.106+0.118*np.sin(row[1]/11.28+5.142))*M)
                 else:
-                    rd = 0.12*exp(0.22*M)
+                    rd = 0.12*np.exp(0.22*M)
 
             elif self.rd_method == 'LiaoWhitman1986':
                 # Liao and Whitman (1986)
@@ -182,7 +184,7 @@ class Borehole:
                 FoS = 'n.a.'
                 MSF = 'n.a'
                 k_sigma = 'n.a.'
-                Probability = 'n.a.'
+                Probability = 0
             else:
                 # Magnitude scaling factor
                 # Idriss (1999), default value

@@ -153,7 +153,7 @@ class Borehole:
 
 
             # Shear stress reduction factor (depth in meters)
-            if row[1] > 20:
+            if row[1] > 20: # 20 in meters
                 warnings.warn('CSR (or equivalent rd values) at depths greater than about 20 m should be based on site response studies (Idriss and Boulanger, 2004)')
 
             if self.rd_method=='Idriss1999':
@@ -192,11 +192,16 @@ class Borehole:
 
                 # Overburden correction factor
                 # Boulanger and Idriss (2004)
-                k_sigma = min(1.1, 1 - (min(0.3, 1 / (18.9 - 2.55 * np.sqrt(N160cs)))) * np.log(sigmavp / 100))
+                if N160cs <= 37:
+                    C_sigma = 1 / (18.9 - 2.55 * np.sqrt(N160cs))
+                else:
+                    C_sigma = 0.3
+                    
+                k_sigma = min(1.1, 1 - (C_sigma) * np.log(sigmavp / 100))
 
                 # SPT Triggering correlation of liquefaction in clean sands
                 # Idriss and Boulanger (2004) & Idriss and Boulanger (2008)
-                if N160cs < 37.5:
+                if N160cs < 37.5: # 37.5 in meters
                     CRR0 = np.exp(N160cs / 14.1 + (N160cs / 126) ** 2 - (N160cs / 23.6) ** 3 + (N160cs / 25.4) ** 4 - 2.8)
                 else:
                     CRR0 = 2

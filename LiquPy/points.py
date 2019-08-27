@@ -53,6 +53,9 @@ def calc_ls_bartlett(mode, M, R, T, F, D, W, S):
         logDH = -16.713 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.592*np.log10(W) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
     elif mode == 's':
         logDH = -16.213 + 1.532*M - 1.406*np.log10(Rstar) - 0.012*R + 0.338*np.log10(S) + 0.540*np.log10(T) + 3.413*np.log10(100-F) - 0.795*np.log10(D + 0.1)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+    
     Dh = np.power(10, logDH)
     if Dh > 6:
         warnings.warn('Flow failure may be possible and Youd et al. (2002) may not be applicable')
@@ -65,6 +68,9 @@ def calc_ls_bardet(mode, M, R, T, F, D, W, S):
         logDH = -6.815 - 0.465 + 1.017 * M - 0.278 * np.log10(R) - 0.026 * R + 0.497*np.log10(W) + 0.558 * np.log10(T)
     elif mode == 's':
         logDH = -6.815 + 1.017*M - 0.278*np.log10(R) - 0.026*R + 0.454*np.log10(S) + 0.558*np.log10(T)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+    
     return np.power(10, logDH)
 
 
@@ -72,26 +78,39 @@ def calc_ls_bardet(mode, M, R, T, F, D, W, S):
 def calc_ls_javadi2006(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
-        DH = (-163.1/M**2 + 57/R/F - 0.0035*T**2/W/D**2 + 0.02*T**2/F/D**2 - 0.26*(T/F)**2 + 0.006*T**2
+        DH = (-163.1/M**2 + 57/R/F - 0.0035*T**2/W/D**2
+              + 0.02*T**2/F/D**2 - 0.26*T**2/F**2 + 0.006*T**2
               - 0.0013*W**2 + 0.0002*M**2*W*T + 3.7)
     elif mode == 's':
-        DH = (-0.8*F/M + 0.0014*F**2 + 0.16*T + 0.112*S + 0.04*S*T/D - 0.026*R*D + 1.14)
+        DH = (-0.8*F/M + 0.0014*F**2 + 0.16*T + 0.112*S
+              + 0.04*S*T/D - 0.026*R*D + 1.14)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+
+    if DH <= 1.5:
+        warnings.warn('Predicted displacement was greater than 1.5 meters. The GP model for moderate displacements are being used')
+        DH = calc_ls_javadi_moderate2006(mode=mode, M=M, R=R, T=T, F=F, D=D, W=W, S=S)
+    
     return DH
 
 
 # Javadi et al 2006 - moderate (Javadi, A. A., Rezania, M., & Nezhad, M. M. (2006). Evaluation of liquefaction induced lateral displacements using genetic programming. Computers and Geotechnics, 33(4-5), 222-233.)
 def calc_ls_javadi_moderate2006(mode, M, R, T, F, D, W, S):
+    # you may either use this function to directly use moderate models
     if mode == 'f':
         DH = (-234.1/(M**2*R*W) - 156/M**2 - 0.008*F/R**2/T + 0.01*W*T/R - 2.9/F - 0.036*M*T**2*D**2/R**2/W
             + 9.4*M/R/F - 4*10**-6*M*R**2/D + 3.84)
     elif mode == 's':
         DH = (-0.027*T**2*F/M**2 + 0.05*R*T/M**2/D + 0.44/M/R**2/S/T - 0.03*R -0.02*M/S/T - 5*10**-5*M*R/D**2
             + 0.075*M**2 - 2.4)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+    
     return DH
 
 
 # Rezania et al 2011 (Rezania, M., Faramarzi, A., & Javadi, A. A. (2011). An evolutionary based approach for assessment of earthquake-induced soil liquefaction and lateral displacement. Engineering Applications of Artificial Intelligence, 24(1), 142-153.)
-def calc_ls_rezania(mode, M, R, T, F, D, W, S):
+def calc_ls_rezania2011(mode, M, R, T, F, D, W, S):
     if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
     if mode == 'f':
         DH = (-2.1414*R**0.5*W**0.5/M**2/D**0.5 - 0.061863*T*F/M**0.5/W**0.5 - 11.1201*M**2/R/W**0.5/F
@@ -99,6 +118,32 @@ def calc_ls_rezania(mode, M, R, T, F, D, W, S):
     elif mode == 's':
         DH = (-1.6941*T**0.5*F**0.5/M**2/D**0.5 - 0.78905*R**0.5*S**0.5*T*F**0.5/M**2
               -2.2542*10**-12*M**0.5*T**2*D**2/R**0.5/S**0.5/F**2 + 0.036036*M*S**0.5*T/D**0.5 + 0.85441)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+
+    if DH < 0:
+        DH = 0
+        
+    return DH
+
+
+def calc_ls_rezania_moderate2011(mode, M, R, T, F, D, W, S):
+    # you may either use this function to directly use moderate models
+    if F == 0: F += 0.001  # Correction for F = 0 | this model does not capture F = 0
+    if mode == 'f':
+        DH = (-12.7493*T*D**0.5/M**2/R**0.5/W**0.5 - 3.4311*F/M**2/R**0.5 - 24.0261/M/R**0.5/T**0.5/F/D
+              -355.8433/M/W**0.5 + 4.0048E-6*R**0.5*F**2/M/W**0.5/D**2 + 128.522/M**.5/W**.5
+              -5.3745E-4*M**2*R**0.5*W**.5 + 0.95605)
+    elif mode == 's':
+        DH = (-1.8017*R*D**0.5/M**2 - 0.12148*F/M - 31.5315/M**0.5
+              +2.9385*M**0.5/S**0.5/T + 1.9056E-4*M**2*S**0.5*T*F**0.5*D**0.5/R**2
+              +13.3224)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+    
+    if DH < 0:
+        DH = 0
+        
     return DH
 
 
@@ -158,6 +203,9 @@ def calc_ls_goh(mode, M, R, T, F, D, W, S):
         logDH = (-1.766 - 1.647*BF1 + 3.102*BF2 + 1.78*BF3 - 0.035*BF4 + 0.08*BF5 + 0.798*BF6 - .036*BF7
                  - 13.161*BF8 + .52*BF9 - .658*BF10 - 3.312*BF11 - 0.976*BF12 - 0.662*BF13 + 35.986*BF14
                  - 3.357*BF15 + 18.876*BF16 - 17.095*BF17 + 1.864*BF18)
+    else:
+        raise ValueError('The mode could be either f for free face or s for sloping ground')
+    
     return np.power(10, logDH)
 
 verification_figures = 998

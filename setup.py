@@ -21,7 +21,8 @@ setup(name='LiquPy',
           'numpy',
           'matplotlib',
           'pandas',
-          'sklearn'],
+          'scikit-learn',
+          'openpyxl'],
       zip_safe=False)
 
 

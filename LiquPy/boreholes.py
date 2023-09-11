@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import warnings
-from math import erf
+from math import erf, exp
 
 def normcdf(x):
     # Cumulative distribution function for the standard normal distribution 
@@ -272,9 +272,12 @@ class Borehole:
             depth_0 = depth_1
             soil_type_0 = soil_type_1
 
+        filtered_data = self.bore_log_data[self.new_bore_log_data['N160'] != 'n.a.'
+        results = - filtered_data.iloc[:,1]
+        
         ax[0].scatter(self.bore_log_data.iloc[:, 2], -self.bore_log_data.iloc[:, 1], marker='x', label='$N_{SPT}$')
         ax[0].scatter(self.new_bore_log_data.loc[self.new_bore_log_data.loc[:, 'N160'] != 'n.a.', 'N160'],
-                      -self.bore_log_data.ix[self.new_bore_log_data.loc[:, 'N160'] != 'n.a.', 1], marker='+', s=75, label='$(N_1)_{60}$')
+                      results, marker='+', s=75, label='$(N_1)_{60}$')
         ax[0].legend(loc='lower right')
         ax[0].set(xlabel='SPT BLOW COUNT', ylabel='DEPTH ({})'.format(self.units_length), xlim=[0, spt_plot_max_x])
         ax[0].set_ylim(top=0, bottom=total_depth)
@@ -390,8 +393,8 @@ class Borehole:
 
 
     def save_to_file(self, file_name):
-        self.new_bore_log_data.to_excel(file_name + '.xls')
-        print(file_name + '.xls has been saved.')
+        self.new_bore_log_data.to_excel(file_name + '.xlsx')
+        print(file_name + '.xlsx has been saved.')
 
 
     # Analytical methods for lateral spread and settlement analysis ************************************************************
@@ -430,8 +433,8 @@ class Borehole:
             print('LDI = {}, settlement = {}'.format(sum(self.new_bore_log_data.dLDIi.values), sum(self.new_bore_log_data.dSi.values)))
 
             if save_to_file:
-                self.new_bore_log_data.to_excel(file_name + '.xls')
-                print(file_name + '.xls has been saved.')
+                self.new_bore_log_data.to_excel(file_name + '.xlsx')
+                print(file_name + '.xlsx has been saved.')
 
         except AttributeError:
             warnings.warn('Lateral spread and settlement analysis could not be done! Simplified liquefaction triggering analysis needs to be done first.')
